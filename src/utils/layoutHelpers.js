@@ -4,6 +4,24 @@ import ELK from 'elkjs/lib/elk.bundled.js'
 const elk = new ELK()
 
 /**
+ * Estimate node dimensions based on label content.
+ * Our nodes have multi-line labels, so we need to account for the actual
+ * rendered size rather than using React Flow's tiny defaults (172x36).
+ */
+const estimateNodeSize = (node) => {
+  const label = node.data?.label || ''
+  const lines = label.split('\n')
+  const maxLineLength = Math.max(...lines.map(l => l.length))
+  
+  // Approximate: ~8px per character width, ~22px per line height
+  // Plus padding (24px horizontal, 20px vertical)
+  const width = Math.max(180, maxLineLength * 8 + 24)
+  const height = Math.max(50, lines.length * 22 + 20)
+  
+  return { width, height }
+}
+
+/**
  * Auto-layout usando Dagre (algoritmo jerárquico)
  * Mejor para flujos lineales y árboles
  */
@@ -11,20 +29,21 @@ export const getLayoutedElementsDagre = (nodes, edges, direction = 'TB') => {
   const dagreGraph = new dagre.graphlib.Graph()
   dagreGraph.setDefaultEdgeLabel(() => ({}))
   
-  const nodeWidth = 172
-  const nodeHeight = 36
-  
   const isHorizontal = direction === 'LR'
   dagreGraph.setGraph({ 
     rankdir: direction,
-    nodesep: isHorizontal ? 80 : 50,
-    ranksep: isHorizontal ? 150 : 80,
+    nodesep: isHorizontal ? 100 : 60,
+    ranksep: isHorizontal ? 200 : 100,
     marginx: 50,
     marginy: 50
   })
 
+  // Use estimated sizes per node so dagre knows how much space they need
+  const nodeSizes = {}
   nodes.forEach((node) => {
-    dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight })
+    const size = estimateNodeSize(node)
+    nodeSizes[node.id] = size
+    dagreGraph.setNode(node.id, { width: size.width, height: size.height })
   })
 
   edges.forEach((edge) => {
@@ -35,11 +54,12 @@ export const getLayoutedElementsDagre = (nodes, edges, direction = 'TB') => {
 
   const layoutedNodes = nodes.map((node) => {
     const nodeWithPosition = dagreGraph.node(node.id)
+    const size = nodeSizes[node.id]
     return {
       ...node,
       position: {
-        x: nodeWithPosition.x - nodeWidth / 2,
-        y: nodeWithPosition.y - nodeHeight / 2,
+        x: nodeWithPosition.x - size.width / 2,
+        y: nodeWithPosition.y - size.height / 2,
       },
     }
   })
@@ -57,17 +77,20 @@ export const getLayoutedElementsELK = async (nodes, edges, options = {}) => {
     layoutOptions: {
       'elk.algorithm': options.algorithm || 'layered',
       'elk.direction': options.direction || 'DOWN',
-      'elk.spacing.nodeNode': '80',
-      'elk.layered.spacing.nodeNodeBetweenLayers': '100',
-      'elk.spacing.edgeNode': '40',
+      'elk.spacing.nodeNode': '100',
+      'elk.layered.spacing.nodeNodeBetweenLayers': '120',
+      'elk.spacing.edgeNode': '50',
       'elk.layered.nodePlacement.strategy': 'SIMPLE',
       'elk.layered.crossingMinimization.strategy': 'LAYER_SWEEP',
     },
-    children: nodes.map((node) => ({
-      id: node.id,
-      width: 172,
-      height: 36,
-    })),
+    children: nodes.map((node) => {
+      const size = estimateNodeSize(node)
+      return {
+        id: node.id,
+        width: size.width,
+        height: size.height,
+      }
+    }),
     edges: edges.map((edge) => ({
       id: edge.id,
       sources: [edge.source],
@@ -96,10 +119,8 @@ export const getLayoutedElementsELK = async (nodes, edges, options = {}) => {
  * Distribuye nodos uniformemente
  */
 export const getGridLayout = (nodes, edges, columns = 5) => {
-  const nodeWidth = 172
-  const nodeHeight = 36
-  const horizontalSpacing = 250
-  const verticalSpacing = 120
+  const horizontalSpacing = 280
+  const verticalSpacing = 180
 
   const layoutedNodes = nodes.map((node, index) => {
     const col = index % columns
@@ -122,7 +143,7 @@ export const getGridLayout = (nodes, edges, columns = 5) => {
  * Distribuye nodos en círculo
  */
 export const getCircularLayout = (nodes, edges) => {
-  const radius = Math.max(300, nodes.length * 25)
+  const radius = Math.max(400, nodes.length * 30)
   const centerX = radius + 100
   const centerY = radius + 100
   
@@ -146,9 +167,6 @@ export const getCircularLayout = (nodes, edges) => {
  * Distribuye nodos minimizando cruces
  */
 export const getForceLayout = (nodes, edges, iterations = 50) => {
-  const nodeWidth = 172
-  const nodeHeight = 36
-  
   // Inicializar posiciones aleatorias si no existen
   let positions = nodes.map((node, i) => ({
     id: node.id,
@@ -172,8 +190,8 @@ export const getForceLayout = (nodes, edges, iterations = 50) => {
         const dy = nodeB.y - nodeA.y
         const distance = Math.sqrt(dx * dx + dy * dy)
         
-        if (distance < 200) {
-          const force = 1000 / (distance * distance + 1)
+        if (distance < 300) {
+          const force = 2000 / (distance * distance + 1)
           const fx = (dx / distance) * force
           const fy = (dy / distance) * force
           
@@ -195,7 +213,7 @@ export const getForceLayout = (nodes, edges, iterations = 50) => {
         const dy = target.y - source.y
         const distance = Math.sqrt(dx * dx + dy * dy)
         
-        const idealDistance = 200
+        const idealDistance = 250
         const force = (distance - idealDistance) * 0.01
         const fx = (dx / distance) * force
         const fy = (dy / distance) * force
@@ -250,8 +268,8 @@ export const getGroupedLayout = (nodes, edges) => {
   })
 
   const groupNames = Object.keys(groups)
-  const columnWidth = 250
-  const rowHeight = 100
+  const columnWidth = 280
+  const rowHeight = 160
 
   let layoutedNodes = []
   groupNames.forEach((groupName, groupIndex) => {

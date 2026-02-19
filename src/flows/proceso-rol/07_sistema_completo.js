@@ -28,7 +28,7 @@ const sistemaCompletoFlow = {
     { id: 'header_inspector', type: 'default', position: { x: 0, y: 160 }, data: { label: '🏆 INSPECTOR DE CALIDAD\nSupervisión en Campo\n[Opera y reporta]' }, className: 'node-role-inspector' },
     { id: 'header_contabilidad', type: 'default', position: { x: 600, y: 160 }, data: { label: '💰 CONTABILIDAD (MÓNICA)\nGestión Financiera\n[Procesa y valida]' }, className: 'node-role-contabilidad' },
     { id: 'header_requisicion', type: 'default', position: { x: 1800, y: 160 }, data: { label: '👥 RECLUTADORA (Cecy/Candy)\nCaptación → Entrevista → Asignación\n[Recluta, filtra y asigna]' }, className: 'node-role-requisicion' },
-    { id: 'header_colaborador', type: 'default', position: { x: 1200, y: 1850 }, data: { label: '👷 COLABORADOR\nTrabajador Orange\n[Ejecuta y reporta]' }, className: 'node-role-colaborador' },
+    { id: 'header_colaborador', type: 'default', position: { x: 1200, y: 1850 }, data: { label: '👷 COLABORADOR\nRegistro → Gates 30/60/100% →\nPonchado GPS → No-Show → Estados' }, className: 'node-role-colaborador' },
 
     // ═══════════════════════════════════════════════════════
     // ROL: ADMIN ORANGE (SILVIA) - Rojo Oscuro
@@ -182,21 +182,42 @@ const sistemaCompletoFlow = {
 
     // ═══════════════════════════════════════════════════════
     // ROL: COLABORADOR - Verde
+    // Flujo completo: Registro → Gates 30/60/100% →
+    //   Onboarding → Ponchado GPS → Pago → No-Show →
+    //   Retención → Estados del Empleado
     // ═══════════════════════════════════════════════════════
-    { id: 'colab_registro', type: 'default', position: { x: 900, y: 2020 }, data: { label: '📋 Reclutamiento\nvía Facebook/Redes' }, className: 'node-role-colaborador' },
+
+    // --- Registro y App ---
+    { id: 'colab_registro', type: 'default', position: { x: 900, y: 2020 }, data: { label: '📋 Reclutamiento\nvía Facebook/Redes\n/ SMS / Referidos' }, className: 'node-role-colaborador' },
     { id: 'colab_app', type: 'default', position: { x: 900, y: 2140 }, data: { label: '📲 Descarga App\nCuenta Pre-creada\nLlena Datos + Fotos' }, className: 'node-role-colaborador' },
     { id: 'colab_blacklist_check', type: 'default', position: { x: 900, y: 2260 }, data: { label: '🔍 Check Black List\n❌ Rechazado si existe' }, className: 'node-role-colaborador' },
     { id: 'colab_pool', type: 'default', position: { x: 900, y: 2380 }, data: { label: '⚪ Pool Recepción\nEsperando Asignación' }, className: 'node-role-colaborador' },
-    { id: 'colab_onboard', type: 'default', position: { x: 1100, y: 2020 }, data: { label: '🤝 Día 1 Onboarding\nCon Inspector' }, className: 'node-role-colaborador' },
-    { id: 'colab_app60', type: 'default', position: { x: 1100, y: 2140 }, data: { label: '📱 App 60% + Pago\n⏰ 72h Deadline' }, className: 'node-role-colaborador' },
-    { id: 'colab_evals', type: 'default', position: { x: 1100, y: 2260 }, data: { label: '📊 Eval Día 5\nEval Día 10' }, className: 'node-role-colaborador' },
-    { id: 'colab_pago', type: 'default', position: { x: 1300, y: 2020 }, data: { label: '💳 Método Pago:\nTransferencia/Cheque\n🟢 Status Verde' }, className: 'node-role-colaborador' },
-    { id: 'colab_operacion', type: 'default', position: { x: 1300, y: 2140 }, data: { label: '⏰ Ponchado Diario\nHoras Dom-Sáb\n💰 Pago Vie 5AM' }, className: 'node-role-colaborador' },
+
+    // --- Gates 30/60/100% ---
+    { id: 'colab_gates', type: 'default', position: { x: 900, y: 2500 }, data: { label: '📊 Gates App:\n🔴 30% = puede trabajar\n🟡 60% = pagable\n🟢 100% = completo' }, className: 'node-role-colaborador' },
+
+    // --- Onboarding ---
+    { id: 'colab_onboard', type: 'default', position: { x: 1100, y: 2020 }, data: { label: '🤝 Día 1 Onboarding\nCon Inspector\n+ Vestimenta negra' }, className: 'node-role-colaborador' },
+    { id: 'colab_app60', type: 'default', position: { x: 1100, y: 2140 }, data: { label: '📱 App 60% + Pago\n⏰ 72h Deadline\n(24h/48h/72h alerts)' }, className: 'node-role-colaborador' },
+    { id: 'colab_evals', type: 'default', position: { x: 1100, y: 2260 }, data: { label: '📊 Eval Día 5 + Día 10\n4 dimensiones:\nDesempeño, Actitud,\nPuntualidad, Calidad' }, className: 'node-role-colaborador' },
+
+    // --- Pago y Operación ---
+    { id: 'colab_pago', type: 'default', position: { x: 1300, y: 2020 }, data: { label: '💳 Método Pago:\nTransferencia/Cheque\n$0.01 validación\n🟢 Status Verde' }, className: 'node-role-colaborador' },
+    { id: 'colab_operacion', type: 'default', position: { x: 1300, y: 2140 }, data: { label: '📍 Ponchado GPS\n+ Huella digital\nHoras Dom-Sáb\n💰 Pago Vie 5AM' }, className: 'node-role-colaborador' },
     { id: 'colab_uniforme', type: 'default', position: { x: 1300, y: 2260 }, data: { label: '👕 Uniforme Día 3/5\n$30 Descuento\nFirma Digital' }, className: 'node-role-colaborador' },
-    { id: 'colab_solicitudes', type: 'default', position: { x: 1500, y: 2020 }, data: { label: '📋 Solicitudes:\nAjuste pago, Reubicación\nMás horas, Vacaciones' }, className: 'node-role-colaborador' },
-    { id: 'colab_vacaciones', type: 'default', position: { x: 1500, y: 2140 }, data: { label: '🌴 Vacaciones:\n52 sem continuas\nPromedio hrs pagado' }, className: 'node-role-colaborador' },
-    { id: 'colab_injury', type: 'default', position: { x: 1500, y: 2260 }, data: { label: '🚑 Injury Report\nDesde App + Firma\nDigital' }, className: 'node-role-colaborador' },
-    { id: 'colab_riesgos', type: 'default', position: { x: 1200, y: 2380 }, data: { label: '⚠️ Riesgos:\nEvaluaciones → Calificación\nIncidente → Black List' }, className: 'node-role-colaborador' },
+
+    // --- Solicitudes y Vacaciones ---
+    { id: 'colab_solicitudes', type: 'default', position: { x: 1500, y: 2020 }, data: { label: '📋 9 Solicitudes:\nAjuste pago, Reubicación\nMás horas, 16%, etc.' }, className: 'node-role-colaborador' },
+    { id: 'colab_vacaciones', type: 'default', position: { x: 1500, y: 2140 }, data: { label: '🌴 Vacaciones:\n52 sem + freeze licencia\nAprueba Irene SIEMPRE' }, className: 'node-role-colaborador' },
+    { id: 'colab_injury', type: 'default', position: { x: 1500, y: 2260 }, data: { label: '🚑 Injury Report\nApp + Workers\' Comp\n(congela vacaciones)' }, className: 'node-role-colaborador' },
+
+    // --- No-Show y Retención ---
+    { id: 'colab_noshow', type: 'default', position: { x: 1100, y: 2380 }, data: { label: '🚨 No-Show: 3 strikes\n1° Warning → 2° Junta\n→ 3° Blacklist' }, className: 'node-critical' },
+    { id: 'colab_retencion', type: 'default', position: { x: 1300, y: 2380 }, data: { label: '🔄 Retención Temp:\nReclutadora busca\nsiguiente hotel\n(meta >72h)' }, className: 'node-role-colaborador' },
+
+    // --- Estados del Empleado ---
+    { id: 'colab_estados', type: 'default', position: { x: 1200, y: 2500 }, data: { label: '🔀 Estados: Activo,\nInactivo, Suspendido,\nTerminado, BL Hotel,\nBL Global' }, className: 'node-role-colaborador' },
+    { id: 'colab_16pct', type: 'default', position: { x: 1500, y: 2380 }, data: { label: '💸 16% Retención:\nSin Tax ID, alertas\n60/30/15 días fiscal\nPierde si no entrega' }, className: 'node-role-colaborador' },
 
     // ═══════════════════════════════════════════════════════
     // NODOS DE CONEXIÓN INTER-ROL (Zona Central)
@@ -410,23 +431,42 @@ const sistemaCompletoFlow = {
     { id: 'e_h12', source: 'hotel_timesheet', target: 'hotel_facturacion', style: { stroke: '#e65100', strokeDasharray: '8,4' } },
 
     // ═══════════════════════════════════════════════════════
-    // COLABORADOR (flujo interno)
+    // COLABORADOR (flujo interno - completo)
+    // Registro → Gates → Onboarding → Ponchado → Pago →
+    // No-Show → Retención → Estados
     // ═══════════════════════════════════════════════════════
+
+    // Header → secciones principales
     { id: 'e_cb1', source: 'header_colaborador', target: 'colab_registro', style: { stroke: '#2e7d32' } },
     { id: 'e_cb2', source: 'header_colaborador', target: 'colab_onboard', style: { stroke: '#2e7d32' } },
     { id: 'e_cb3', source: 'header_colaborador', target: 'colab_pago', style: { stroke: '#2e7d32' } },
     { id: 'e_cb4', source: 'header_colaborador', target: 'colab_solicitudes', style: { stroke: '#2e7d32' } },
+
+    // Registro → App → BL → Pool → Gates
     { id: 'e_cb5', source: 'colab_registro', target: 'colab_app', style: { stroke: '#2e7d32' } },
     { id: 'e_cb6', source: 'colab_app', target: 'colab_blacklist_check', style: { stroke: '#2e7d32' } },
     { id: 'e_cb7', source: 'colab_blacklist_check', target: 'colab_pool', style: { stroke: '#2e7d32' } },
+    { id: 'e_cb7b', source: 'colab_pool', target: 'colab_gates', style: { stroke: '#2e7d32' } },
+
+    // Onboarding → App 60% → Evals → No-Show
     { id: 'e_cb8', source: 'colab_onboard', target: 'colab_app60', style: { stroke: '#2e7d32' } },
     { id: 'e_cb9', source: 'colab_app60', target: 'colab_evals', style: { stroke: '#2e7d32' } },
+    { id: 'e_cb9b', source: 'colab_evals', target: 'colab_noshow', style: { stroke: '#2e7d32', strokeDasharray: '5,5' } },
+
+    // Pago → Operación (GPS) → Uniforme → Retención
     { id: 'e_cb10', source: 'colab_pago', target: 'colab_operacion', style: { stroke: '#2e7d32' } },
     { id: 'e_cb11', source: 'colab_operacion', target: 'colab_uniforme', style: { stroke: '#2e7d32' } },
+    { id: 'e_cb11b', source: 'colab_uniforme', target: 'colab_retencion', style: { stroke: '#2e7d32', strokeDasharray: '5,5' } },
+
+    // Solicitudes → Vacaciones → Injury → 16%
     { id: 'e_cb12', source: 'colab_solicitudes', target: 'colab_vacaciones', style: { stroke: '#2e7d32' } },
     { id: 'e_cb13', source: 'colab_vacaciones', target: 'colab_injury', style: { stroke: '#2e7d32' } },
-    { id: 'e_cb14', source: 'colab_evals', target: 'colab_riesgos', style: { stroke: '#2e7d32', strokeDasharray: '5,5' } },
-    { id: 'e_cb15', source: 'colab_uniforme', target: 'colab_riesgos', style: { stroke: '#2e7d32', strokeDasharray: '5,5' } },
+    { id: 'e_cb13b', source: 'colab_injury', target: 'colab_16pct', style: { stroke: '#2e7d32', strokeDasharray: '5,5' } },
+
+    // No-Show + Retención → Estados
+    { id: 'e_cb14', source: 'colab_noshow', target: 'colab_estados', style: { stroke: '#c62828', strokeDasharray: '5,5' } },
+    { id: 'e_cb15', source: 'colab_retencion', target: 'colab_estados', style: { stroke: '#2e7d32', strokeDasharray: '5,5' } },
+    { id: 'e_cb15b', source: 'colab_gates', target: 'colab_estados', style: { stroke: '#2e7d32', strokeDasharray: '5,5' } },
 
     // ═══════════════════════════════════════════════════════
     // CONEXIONES INTER-ROL: PROCESOS COMPARTIDOS
@@ -569,6 +609,18 @@ const sistemaCompletoFlow = {
 
     // Admin KPIs ← Inspector (datos calidad)
     { id: 'e_direct_22', source: 'insp_evaluaciones', target: 'admin_dashboard', label: 'Datos evaluaciones', style: { stroke: '#f9a825', strokeWidth: 2, strokeDasharray: '8,4' } },
+
+    // Colaborador No-Show → Reclutadora (buscar reemplazo)
+    { id: 'e_direct_23', source: 'colab_noshow', target: 'req_busqueda', label: 'Buscar reemplazo', style: { stroke: '#c62828', strokeWidth: 2, strokeDasharray: '8,4' } },
+
+    // Colaborador Retención → Reclutadora (reasignación proactiva)
+    { id: 'e_direct_24', source: 'colab_retencion', target: 'req_recepcion', label: 'Buscar siguiente hotel', style: { stroke: '#2e7d32', strokeWidth: 2, strokeDasharray: '8,4' } },
+
+    // Colaborador 16% → Contabilidad (retención fiscal)
+    { id: 'e_direct_25', source: 'colab_16pct', target: 'cont_discrepancias', label: 'Retención 16% empleado', style: { stroke: '#2e7d32', strokeWidth: 2, strokeDasharray: '8,4' } },
+
+    // Colaborador Estados → Admin (blacklist decide Dirección)
+    { id: 'e_direct_26', source: 'colab_estados', target: 'admin_blacklist', label: 'BL → Dirección decide', style: { stroke: '#c62828', strokeWidth: 2, strokeDasharray: '8,4' } },
   ]
 }
 

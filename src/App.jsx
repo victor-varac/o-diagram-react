@@ -12,6 +12,15 @@ import adminOrangeRolFlow from './flows/proceso-rol/05_admin_orange'
 import colaboradorRolFlow from './flows/proceso-rol/06_colaborador'
 import sistemaCompletoFlow from './flows/proceso-rol/07_sistema_completo'
 
+// Import PROCESO DIGITAL flows
+import inspectorDigitalFlow from './flows/proceso-digital/01_inspector'
+import contabilidadDigitalFlow from './flows/proceso-digital/02_contabilidad'
+import requisicionDigitalFlow from './flows/proceso-digital/03_requisicion'
+import adminHotelDigitalFlow from './flows/proceso-digital/04_admin_hotel'
+import adminOrangeDigitalFlow from './flows/proceso-digital/05_admin_orange'
+import colaboradorDigitalFlow from './flows/proceso-digital/06_colaborador'
+import sistemaCompletoDigitalFlow from './flows/proceso-digital/07_sistema_completo'
+
 const flowsRol = {
   'inspector': {
     title: '01. Inspector',
@@ -57,11 +66,64 @@ const flowsRol = {
   }
 }
 
+const flowsDigital = {
+  'inspector': {
+    title: '01. Inspector',
+    description: 'Checklist digital, evaluaciones en tablet, GPS supervisión, reportes automáticos',
+    data: inspectorDigitalFlow,
+    icon: '🏆',
+    status: 'placeholder'
+  },
+  'contabilidad': {
+    title: '02. Contabilidad',
+    description: 'Dashboard automático, validaciones auto, pre-aprobación nómina, facturación digital',
+    data: contabilidadDigitalFlow,
+    icon: '💰',
+    status: 'placeholder'
+  },
+  'requisicion': {
+    title: '03. Requisición',
+    description: 'Auto-matching por zona, pool inteligente, requisiciones digitales, retención automatizada',
+    data: requisicionDigitalFlow,
+    icon: '📋',
+    status: 'placeholder'
+  },
+  'admin_hotel': {
+    title: '04. Admin Hotel',
+    description: 'Portal de cliente, solicitar personal online, aprobación horas, dashboard facturación',
+    data: adminHotelDigitalFlow,
+    icon: '🏨',
+    status: 'placeholder'
+  },
+  'admin_orange': {
+    title: '05. Admin Orange',
+    description: 'Dashboard KPIs, aprobaciones con click, cuentas bancarias seguras, blacklist workflow',
+    data: adminOrangeDigitalFlow,
+    icon: '👔',
+    status: 'placeholder'
+  },
+  'colaborador': {
+    title: '06. Colaborador',
+    description: 'Auto-registro, gates automáticos, geofencing, nómina auto, solicitudes workflow, no-show detección',
+    data: colaboradorDigitalFlow,
+    icon: '👷',
+    status: 'complete'
+  },
+  'sistema_completo': {
+    title: '07. Sistema Completo Digital',
+    description: '6 roles digitalizados con conexiones automatizadas y workflows end-to-end',
+    data: sistemaCompletoDigitalFlow,
+    icon: '⚡',
+    status: 'placeholder'
+  }
+}
+
 function App() {
   const [selectedFolder, setSelectedFolder] = useState('proceso-rol')
   const [selectedFlow, setSelectedFlow] = useState('inspector')
 
   const getFlowsForFolder = (folder) => {
+    if (folder === 'proceso-digital') return flowsDigital
     return flowsRol
   }
   const flows = getFlowsForFolder(selectedFolder)

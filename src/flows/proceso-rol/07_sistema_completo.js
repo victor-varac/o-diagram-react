@@ -23,7 +23,7 @@ const sistemaCompletoFlow = {
     // ═══════════════════════════════════════════════════════
     // HEADERS DE CADA ROL (Nodos grandes de título)
     // ═══════════════════════════════════════════════════════
-    { id: 'header_admin', type: 'default', position: { x: 1200, y: 160 }, data: { label: '👔 SILVIA / DIRECCIÓN\nAdmin Orange Staffing\n[Aprueba todo]' }, className: 'node-role-admin' },
+    { id: 'header_admin', type: 'default', position: { x: 1200, y: 160 }, data: { label: '👔 SILVIA / DIRECCIÓN\nBiz Dev → Onboarding → Nómina →\nCuentas → KPIs → Contratos → Seguridad' }, className: 'node-role-admin' },
     { id: 'header_hotel', type: 'default', position: { x: 2200, y: 160 }, data: { label: '🏨 MANAGER HOTEL (Cliente)\nOnboarding → Operación → Facturación\n[Solicita, reporta y evalúa]' }, className: 'node-role-hotel' },
     { id: 'header_inspector', type: 'default', position: { x: 0, y: 160 }, data: { label: '🏆 INSPECTOR DE CALIDAD\nSupervisión en Campo\n[Opera y reporta]' }, className: 'node-role-inspector' },
     { id: 'header_contabilidad', type: 'default', position: { x: 600, y: 160 }, data: { label: '💰 CONTABILIDAD (MÓNICA)\nGestión Financiera\n[Procesa y valida]' }, className: 'node-role-contabilidad' },
@@ -32,18 +32,45 @@ const sistemaCompletoFlow = {
 
     // ═══════════════════════════════════════════════════════
     // ROL: ADMIN ORANGE (SILVIA) - Rojo Oscuro
+    // Flujo completo: Biz Dev → Onboarding Hotel →
+    //   Gestión Personal → Nómina → Aprobaciones Especiales →
+    //   Cuentas Bancarias → KPIs → Contratos → Seguridad
     // ═══════════════════════════════════════════════════════
+
+    // --- Business Development ---
     { id: 'admin_biz_dev', type: 'default', position: { x: 1050, y: 340 }, data: { label: '🏢 Business\nDevelopment' }, className: 'node-role-admin' },
-    { id: 'admin_negociacion', type: 'default', position: { x: 1050, y: 460 }, data: { label: '🤝 Negociación\nContrato + Rates' }, className: 'node-role-admin' },
+    { id: 'admin_negociacion', type: 'default', position: { x: 1050, y: 460 }, data: { label: '🤝 Negociación\nContrato + Rates\nMargen 30-35%' }, className: 'node-role-admin' },
     { id: 'admin_firma_contrato', type: 'default', position: { x: 1050, y: 580 }, data: { label: '📄 Firma Service\nContract' }, className: 'node-role-admin' },
+
+    // --- Onboarding Hotel Nuevo ---
+    { id: 'admin_onboard_hotel', type: 'default', position: { x: 1050, y: 700 }, data: { label: '🏨 Onboarding Hotel:\nContrato en sistema +\nCarpeta PayRoll +\nCredenciales → Hotel' }, className: 'node-role-admin' },
+
+    // --- Gestión de Personal ---
     { id: 'admin_gestion_personal', type: 'default', position: { x: 1200, y: 340 }, data: { label: '👥 Gestión\nde Personal' }, className: 'node-role-admin' },
     { id: 'admin_semaforo', type: 'default', position: { x: 1200, y: 460 }, data: { label: '🚦 Semáforo Empleados\n🟢≥60% 🟡40-60% 🔴<40%' }, className: 'node-role-admin' },
+
+    // --- Aprobación de Nómina ---
     { id: 'admin_aprobar_nomina', type: 'default', position: { x: 1350, y: 340 }, data: { label: '💰 Aprobación\nNómina Final' }, className: 'node-role-admin' },
-    { id: 'admin_revision_jue', type: 'default', position: { x: 1350, y: 460 }, data: { label: '⏰ JUEVES 2PM\nRevisión Final' }, className: 'node-role-admin' },
+    { id: 'admin_revision_jue', type: 'default', position: { x: 1350, y: 460 }, data: { label: '⏰ JUEVES 12-3PM\nRevisión Final' }, className: 'node-role-admin' },
     { id: 'admin_pago_vie', type: 'default', position: { x: 1350, y: 580 }, data: { label: '💰 Pago Vie 5AM\nDinero Disponible' }, className: 'node-role-admin' },
-    { id: 'admin_dashboard', type: 'default', position: { x: 1200, y: 580 }, data: { label: '📊 Dashboard\nKPIs + Rentabilidad' }, className: 'node-role-admin' },
-    { id: 'admin_blacklist', type: 'default', position: { x: 1200, y: 700 }, data: { label: '🚫 Aprobar/Rechazar\nBlack List' }, className: 'node-blacklist' },
-    { id: 'admin_security', type: 'default', position: { x: 1350, y: 700 }, data: { label: '🔐 ÚNICA aprueba\nnómina + datos banco' }, className: 'node-role-admin' },
+
+    // --- Aprobaciones Especiales ---
+    { id: 'admin_aprobaciones', type: 'default', position: { x: 1350, y: 700 }, data: { label: '🔑 Aprobaciones Especiales:\n🌴 Vacaciones (TODAS Irene)\n📑 Cheques extemporáneos\n💸 Reembolsos 16%' }, className: 'node-role-admin' },
+
+    // --- Cuentas Bancarias ---
+    { id: 'admin_cuentas_banco', type: 'default', position: { x: 1500, y: 340 }, data: { label: '🏦 Cuentas Bancarias\nSOLO Dirección modifica\n(prevenir fraudes)' }, className: 'node-role-admin' },
+    { id: 'admin_cuenta_proceso', type: 'default', position: { x: 1500, y: 460 }, data: { label: '📋 Proceso: Solicitud\n→ Verifica identidad\n→ Aprueba/Rechaza\n→ $0.01 validación' }, className: 'node-role-admin' },
+    { id: 'admin_cuenta_audit', type: 'default', position: { x: 1500, y: 580 }, data: { label: '📋 Auditoría completa\nQuién, cuándo, razón\nResponsabilidad clara' }, className: 'node-role-admin' },
+
+    // --- KPIs y Dashboard ---
+    { id: 'admin_dashboard', type: 'default', position: { x: 1200, y: 580 }, data: { label: '📊 Dashboard KPIs:\nOperación, Rotación,\nFinanciero, Satisfacción,\nEstrategia' }, className: 'node-role-admin' },
+
+    // --- Gestión Contratos ---
+    { id: 'admin_contratos', type: 'default', position: { x: 1200, y: 700 }, data: { label: '📄 Gestión Contratos:\nAlertas 60/30/15 días\nRenovar o No Renovar' }, className: 'node-role-admin' },
+
+    // --- Decisiones Críticas y Seguridad ---
+    { id: 'admin_blacklist', type: 'default', position: { x: 1200, y: 820 }, data: { label: '🚫 Black List +\nTerminaciones +\nReclamaciones' }, className: 'node-blacklist' },
+    { id: 'admin_security', type: 'default', position: { x: 1350, y: 820 }, data: { label: '🔐 ÚNICA aprueba:\nnómina + datos banco\nSeparación funciones' }, className: 'node-role-admin' },
 
     // ═══════════════════════════════════════════════════════
     // ROL: CONTABILIDAD (MÓNICA) - Rosa/Magenta
@@ -246,19 +273,37 @@ const sistemaCompletoFlow = {
     { id: 'e_c6', source: 'orange_center', target: 'header_colaborador', style: { stroke: '#2e7d32', strokeWidth: 3 } },
 
     // ═══════════════════════════════════════════════════════
-    // ADMIN ORANGE (flujo interno)
+    // ADMIN ORANGE (flujo interno - completo)
+    // Biz Dev → Onboarding Hotel → Personal → Nómina →
+    // Aprobaciones → Cuentas Bancarias → KPIs → Contratos
     // ═══════════════════════════════════════════════════════
+
+    // Header → secciones principales
     { id: 'e_a1', source: 'header_admin', target: 'admin_biz_dev', style: { stroke: '#b71c1c' } },
     { id: 'e_a2', source: 'header_admin', target: 'admin_gestion_personal', style: { stroke: '#b71c1c' } },
     { id: 'e_a3', source: 'header_admin', target: 'admin_aprobar_nomina', style: { stroke: '#b71c1c' } },
+    { id: 'e_a3b', source: 'header_admin', target: 'admin_cuentas_banco', style: { stroke: '#b71c1c' } },
+
+    // Business Development → Onboarding Hotel
     { id: 'e_a4', source: 'admin_biz_dev', target: 'admin_negociacion', style: { stroke: '#b71c1c' } },
     { id: 'e_a5', source: 'admin_negociacion', target: 'admin_firma_contrato', style: { stroke: '#b71c1c' } },
+    { id: 'e_a5b', source: 'admin_firma_contrato', target: 'admin_onboard_hotel', style: { stroke: '#b71c1c' } },
+
+    // Gestión Personal → Semáforo → Dashboard → Contratos → Blacklist
     { id: 'e_a6', source: 'admin_gestion_personal', target: 'admin_semaforo', style: { stroke: '#b71c1c' } },
+    { id: 'e_a9', source: 'admin_semaforo', target: 'admin_dashboard', style: { stroke: '#b71c1c' } },
+    { id: 'e_a9b', source: 'admin_dashboard', target: 'admin_contratos', style: { stroke: '#b71c1c', strokeDasharray: '5,5' } },
+    { id: 'e_a10', source: 'admin_contratos', target: 'admin_blacklist', style: { stroke: '#b71c1c' } },
+
+    // Nómina → Revisión → Pago → Aprobaciones Especiales
     { id: 'e_a7', source: 'admin_aprobar_nomina', target: 'admin_revision_jue', style: { stroke: '#b71c1c' } },
     { id: 'e_a8', source: 'admin_revision_jue', target: 'admin_pago_vie', animated: true, style: { stroke: '#b71c1c' } },
-    { id: 'e_a9', source: 'admin_semaforo', target: 'admin_dashboard', style: { stroke: '#b71c1c' } },
-    { id: 'e_a10', source: 'admin_dashboard', target: 'admin_blacklist', style: { stroke: '#b71c1c' } },
-    { id: 'e_a11', source: 'admin_pago_vie', target: 'admin_security', style: { stroke: '#b71c1c', strokeDasharray: '5,5' } },
+    { id: 'e_a8b', source: 'admin_pago_vie', target: 'admin_aprobaciones', style: { stroke: '#b71c1c', strokeDasharray: '5,5' } },
+    { id: 'e_a11', source: 'admin_aprobaciones', target: 'admin_security', style: { stroke: '#b71c1c', strokeDasharray: '5,5' } },
+
+    // Cuentas Bancarias
+    { id: 'e_a12', source: 'admin_cuentas_banco', target: 'admin_cuenta_proceso', style: { stroke: '#b71c1c' } },
+    { id: 'e_a13', source: 'admin_cuenta_proceso', target: 'admin_cuenta_audit', style: { stroke: '#b71c1c' } },
 
     // ═══════════════════════════════════════════════════════
     // CONTABILIDAD (flujo interno)
@@ -421,6 +466,7 @@ const sistemaCompletoFlow = {
     // Vacaciones
     { id: 'e_x_vac1', source: 'colab_vacaciones', target: 'proc_vacaciones', label: 'Solicita', style: { stroke: '#2e7d32', strokeWidth: 2, strokeDasharray: '8,4' } },
     { id: 'e_x_vac2', source: 'cont_vacaciones', target: 'proc_vacaciones', label: 'Calcula', style: { stroke: '#c2185b', strokeWidth: 2, strokeDasharray: '8,4' } },
+    { id: 'e_x_vac3', source: 'admin_aprobaciones', target: 'proc_vacaciones', label: 'Irene aprueba', style: { stroke: '#b71c1c', strokeWidth: 2, strokeDasharray: '8,4' } },
 
     // Uniformes
     { id: 'e_x_uni1', source: 'insp_cobro_uniforme', target: 'proc_uniformes', label: 'Entrega', style: { stroke: '#f9a825', strokeWidth: 2, strokeDasharray: '8,4' } },
@@ -478,8 +524,9 @@ const sistemaCompletoFlow = {
     // Hotel → Reclutadora (requisición)
     { id: 'e_direct_6', source: 'hotel_posicion', target: 'req_recepcion', label: 'Nueva requisición', animated: true, style: { stroke: '#ff9800', strokeWidth: 3 } },
 
-    // Admin → Hotel (contrato)
+    // Admin → Hotel (contrato + onboarding)
     { id: 'e_direct_7', source: 'admin_firma_contrato', target: 'hotel_contrato', label: 'Service Contract', style: { stroke: '#b71c1c', strokeWidth: 3, strokeDasharray: '8,4' } },
+    { id: 'e_direct_7b', source: 'admin_onboard_hotel', target: 'hotel_onboarding', label: 'Credenciales + setup', animated: true, style: { stroke: '#b71c1c', strokeWidth: 3 } },
 
     // Reclutadora → Inspector (tarjeta Trello + empleado asignado)
     { id: 'e_direct_8', source: 'req_tarjeta', target: 'insp_onboarding', label: 'Tarjeta Trello → Onboard', animated: true, style: { stroke: '#9c27b0', strokeWidth: 3 } },
@@ -510,8 +557,18 @@ const sistemaCompletoFlow = {
     // Hotel → Reclutadora (no-show → buscar reemplazo)
     { id: 'e_direct_17', source: 'hotel_noshow', target: 'req_busqueda', label: 'Buscar reemplazo urgente', animated: true, style: { stroke: '#e65100', strokeWidth: 3 } },
 
-    // Admin Orange → Hotel (contrato firmado)
-    { id: 'e_direct_18', source: 'admin_firma_contrato', target: 'hotel_onboarding', label: 'Onboarding cliente', style: { stroke: '#b71c1c', strokeWidth: 2, strokeDasharray: '8,4' } },
+    // Admin Orange → Hotel (contrato firmado → onboarding)
+    { id: 'e_direct_18', source: 'admin_onboard_hotel', target: 'hotel_contrato', label: 'Contrato en sistema', style: { stroke: '#b71c1c', strokeWidth: 2, strokeDasharray: '8,4' } },
+
+    // Admin → Contabilidad (aprobaciones especiales)
+    { id: 'e_direct_19', source: 'admin_aprobaciones', target: 'cont_vacaciones', label: 'Irene aprueba vacaciones', style: { stroke: '#b71c1c', strokeWidth: 2, strokeDasharray: '8,4' } },
+    { id: 'e_direct_20', source: 'admin_aprobaciones', target: 'cont_cheques', label: 'Autoriza extemporáneos', style: { stroke: '#b71c1c', strokeWidth: 2, strokeDasharray: '8,4' } },
+
+    // Admin → Reclutadora (contratos vencimiento → más/menos personal)
+    { id: 'e_direct_21', source: 'admin_contratos', target: 'req_recepcion', label: 'Ajustar personal (contrato)', style: { stroke: '#b71c1c', strokeWidth: 2, strokeDasharray: '8,4' } },
+
+    // Admin KPIs ← Inspector (datos calidad)
+    { id: 'e_direct_22', source: 'insp_evaluaciones', target: 'admin_dashboard', label: 'Datos evaluaciones', style: { stroke: '#f9a825', strokeWidth: 2, strokeDasharray: '8,4' } },
   ]
 }
 

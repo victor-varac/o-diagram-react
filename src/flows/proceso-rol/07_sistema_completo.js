@@ -27,7 +27,7 @@ const sistemaCompletoFlow = {
     { id: 'header_hotel', type: 'default', position: { x: 2200, y: 160 }, data: { label: '🏨 MANAGER HOTEL\nCliente del Servicio\n[Solicita y reporta]' }, className: 'node-role-hotel' },
     { id: 'header_inspector', type: 'default', position: { x: 0, y: 160 }, data: { label: '🏆 INSPECTOR DE CALIDAD\nSupervisión en Campo\n[Opera y reporta]' }, className: 'node-role-inspector' },
     { id: 'header_contabilidad', type: 'default', position: { x: 600, y: 160 }, data: { label: '💰 CONTABILIDAD (MÓNICA)\nGestión Financiera\n[Procesa y valida]' }, className: 'node-role-contabilidad' },
-    { id: 'header_requisicion', type: 'default', position: { x: 1800, y: 160 }, data: { label: '👥 RECLUTADORA\nRequisiciones y Pool\n[Busca y asigna]' }, className: 'node-role-requisicion' },
+    { id: 'header_requisicion', type: 'default', position: { x: 1800, y: 160 }, data: { label: '👥 RECLUTADORA (Cecy/Candy)\nCaptación → Entrevista → Asignación\n[Recluta, filtra y asigna]' }, className: 'node-role-requisicion' },
     { id: 'header_colaborador', type: 'default', position: { x: 1200, y: 1850 }, data: { label: '👷 COLABORADOR\nTrabajador Orange\n[Ejecuta y reporta]' }, className: 'node-role-colaborador' },
 
     // ═══════════════════════════════════════════════════════
@@ -83,20 +83,44 @@ const sistemaCompletoFlow = {
 
     // ═══════════════════════════════════════════════════════
     // ROL: RECLUTADORA - Púrpura
+    // Flujo completo: Captación → Entrevista → Datos →
+    //   Requisición → Búsqueda → Asignación → Trello →
+    //   Onboarding → Seguimiento Día 1
     // ═══════════════════════════════════════════════════════
-    { id: 'req_recepcion', type: 'default', position: { x: 1700, y: 340 }, data: { label: '📋 Recepción\nRequisición' }, className: 'node-role-requisicion' },
-    { id: 'req_prioridad', type: 'default', position: { x: 1700, y: 460 }, data: { label: '🚦 Prioridad:\n🟢>120h 🟡72-120h\n🔴<72h' }, className: 'node-role-requisicion' },
-    { id: 'req_serial', type: 'default', position: { x: 1700, y: 580 }, data: { label: '# Generar Serial\n+ Costos Proyectados' }, className: 'node-role-requisicion' },
-    { id: 'req_costos', type: 'default', position: { x: 1850, y: 340 }, data: { label: '💰 Costos y Contratos\nBill Rate ~$19.58\nPay Rate ~$15' }, className: 'node-role-requisicion' },
-    { id: 'req_margen', type: 'default', position: { x: 1850, y: 460 }, data: { label: '📊 Validar Margen\n30-35%' }, className: 'node-role-requisicion' },
-    { id: 'req_busqueda', type: 'default', position: { x: 2000, y: 340 }, data: { label: '🔍 Búsqueda\nen Pools' }, className: 'node-role-requisicion' },
-    { id: 'req_filtros', type: 'default', position: { x: 2000, y: 460 }, data: { label: '⚙️ Filtros:\nDistancia ≤30min\nDisponibilidad\nNo Black List' }, className: 'node-role-requisicion' },
-    { id: 'req_asignacion', type: 'default', position: { x: 1850, y: 580 }, data: { label: '📌 Asignación\nNotificar Empleado' }, className: 'node-role-requisicion' },
-    { id: 'req_decision', type: 'default', position: { x: 2000, y: 580 }, data: { label: '✅ Acepta / ❌ Rechaza\n→ Buscar otro' }, className: 'node-role-requisicion' },
-    { id: 'req_tracking', type: 'default', position: { x: 1850, y: 700 }, data: { label: '📍 Tracking\nTiempo Real' }, className: 'node-role-requisicion' },
-    { id: 'req_show', type: 'default', position: { x: 1700, y: 700 }, data: { label: '✅ Presentó →\nOnboarding' }, className: 'node-role-requisicion' },
-    { id: 'req_noshow', type: 'default', position: { x: 2000, y: 700 }, data: { label: '❌ NO-SHOW\nPenalización' }, className: 'node-role-requisicion' },
-    { id: 'req_pool', type: 'default', position: { x: 1850, y: 820 }, data: { label: '📦 Pool Candidatos\nFacebook / Redes\nReferidos' }, className: 'node-role-requisicion' },
+
+    // --- Captación ---
+    { id: 'req_captacion', type: 'default', position: { x: 1700, y: 340 }, data: { label: '📢 CAPTACIÓN\nFacebook, SMS,\nReferidos, WhatsApp' }, className: 'node-role-requisicion' },
+
+    // --- Entrevista / Filtro ---
+    { id: 'req_entrevista', type: 'default', position: { x: 1700, y: 460 }, data: { label: '🎙️ ENTREVISTA TEL.\nPreguntas por posición\n+ Alertas Rojas' }, className: 'node-role-requisicion' },
+    { id: 'req_posiciones', type: 'default', position: { x: 1850, y: 340 }, data: { label: '🔀 4 Guías Entrevista:\nHousekeeper, Houseman\nLaundry, Mantenimiento' }, className: 'node-role-requisicion' },
+    { id: 'req_alertas', type: 'default', position: { x: 1850, y: 460 }, data: { label: '🚩 Alertas Rojas:\nRespuestas vagas,\nsin experiencia real,\nmuchas restricciones' }, className: 'node-critical' },
+    { id: 'req_apto', type: 'default', position: { x: 1700, y: 580 }, data: { label: '⚖️ ¿Apto?\n✅ Sí → Datos\n❌ No → Pool espera' }, className: 'node-role-requisicion' },
+
+    // --- Datos del Candidato ---
+    { id: 'req_datos', type: 'default', position: { x: 1850, y: 580 }, data: { label: '📝 DATOS: Nombre, Tel,\nZona, Experiencia,\nInglés, Transporte, Docs' }, className: 'node-role-requisicion' },
+    { id: 'req_docs', type: 'default', position: { x: 2000, y: 340 }, data: { label: '📄 Docs: Tax ID, SSN,\nPermiso, Pasaporte,\nCédula Consular' }, className: 'node-role-requisicion' },
+    { id: 'req_16pct', type: 'default', position: { x: 2000, y: 460 }, data: { label: '⚠️ Sin Tax ID/SSN\n→ Retención 16%\nimpuestos' }, className: 'node-critical' },
+
+    // --- Pool y Recepción Requisición ---
+    { id: 'req_pool', type: 'default', position: { x: 2000, y: 580 }, data: { label: '👥 Pool Disponibles\n+ Pool Nuevos\n(candidatos filtrados)' }, className: 'node-role-requisicion' },
+    { id: 'req_recepcion', type: 'default', position: { x: 1700, y: 700 }, data: { label: '📋 Recepción Req.\nChat 4 WhatsApp,\nInspector, Manager' }, className: 'node-role-requisicion' },
+    { id: 'req_prioridad', type: 'default', position: { x: 1850, y: 700 }, data: { label: '🚦 Prioridad:\n🟢>120h 🟡72-120h\n🔴<72h Urgente' }, className: 'node-role-requisicion' },
+
+    // --- Costos y Búsqueda ---
+    { id: 'req_costos', type: 'default', position: { x: 2000, y: 700 }, data: { label: '💰 Costos: Bill ~$19.58\nPay ~$15, Margen 30-35%' }, className: 'node-role-requisicion' },
+    { id: 'req_busqueda', type: 'default', position: { x: 1700, y: 820 }, data: { label: '🔍 Búsqueda en Pools\nFiltros: Distancia ≤30min\nDisponibilidad, No BL' }, className: 'node-role-requisicion' },
+
+    // --- Asignación y Trello ---
+    { id: 'req_asignacion', type: 'default', position: { x: 1850, y: 820 }, data: { label: '📞 Llamar Candidato\n✅ Acepta / ❌ Rechaza' }, className: 'node-role-requisicion' },
+    { id: 'req_tarjeta', type: 'default', position: { x: 2000, y: 820 }, data: { label: '📇 Crear Tarjeta Trello\nFecha+Nombre+Tel+Hotel\n→ Tablero 4 Inspectores' }, className: 'node-role-requisicion' },
+
+    // --- Onboarding y Seguimiento ---
+    { id: 'req_onboarding', type: 'default', position: { x: 1700, y: 940 }, data: { label: '🍊 Msg Bienvenida\nVestimenta negra,\nTime Sheet día 1,\nBeneficios Orange' }, className: 'node-role-requisicion' },
+    { id: 'req_monitoreo', type: 'default', position: { x: 1850, y: 940 }, data: { label: '📱 Monitoreo Día 1\nWhatsApp/Llamada\nReportar Chat 4' }, className: 'node-role-requisicion' },
+    { id: 'req_show', type: 'default', position: { x: 2000, y: 940 }, data: { label: '✅ LLEGÓ → Foto ID\nReporte Ingresos\nTablero 1: CUBIERTA' }, className: 'node-role-requisicion' },
+    { id: 'req_noshow', type: 'default', position: { x: 2000, y: 1060 }, data: { label: '❌ NO-SHOW\n→ Buscar Reemplazo' }, className: 'node-critical' },
+    { id: 'req_margen', type: 'default', position: { x: 1850, y: 1060 }, data: { label: '📊 Métricas: Tasa\ncumplimiento, No-Shows,\nRetención 1er mes' }, className: 'node-role-requisicion' },
 
     // ═══════════════════════════════════════════════════════
     // ROL: ADMIN HOTEL (MANAGER) - Naranja
@@ -136,9 +160,9 @@ const sistemaCompletoFlow = {
     // NODOS DE CONEXIÓN INTER-ROL (Zona Central)
     // Procesos compartidos entre roles
     // ═══════════════════════════════════════════════════════
-    { id: 'proc_requisicion', type: 'default', position: { x: 1850, y: 1000 }, data: { label: '📋 PROCESO\nREQUISICIÓN\n(Hotel→Reclutadora→\nInspector→Colaborador)' }, className: 'node-role-process' },
+    { id: 'proc_requisicion', type: 'default', position: { x: 1850, y: 1200 }, data: { label: '📋 PROCESO\nREQUISICIÓN COMPLETO\n(Hotel→Reclutadora→Trello→\nInspector→Colaborador)' }, className: 'node-role-process' },
     { id: 'proc_nomina', type: 'default', position: { x: 600, y: 1000 }, data: { label: '💵 PROCESO\nNÓMINA SEMANAL\n(Inspector→Contabilidad→\nAdmin→Colaborador)' }, className: 'node-role-process' },
-    { id: 'proc_onboarding', type: 'default', position: { x: 200, y: 1000 }, data: { label: '🤝 PROCESO\nONBOARDING\n(Reclutadora→Inspector→\nColaborador→Hotel)' }, className: 'node-role-process' },
+    { id: 'proc_onboarding', type: 'default', position: { x: 200, y: 1000 }, data: { label: '🤝 PROCESO\nONBOARDING\n(Reclutadora envía msg→\nInspector día 1→Colaborador)' }, className: 'node-role-process' },
     { id: 'proc_calidad', type: 'default', position: { x: 200, y: 1200 }, data: { label: '⭐ PROCESO\nCALIDAD\n(Inspector→Hotel→\nAdmin→Colaborador)' }, className: 'node-role-process' },
     { id: 'proc_incidentes', type: 'default', position: { x: 600, y: 1200 }, data: { label: '⚠️ PROCESO\nINCIDENTES\n(Hotel/Inspector→Admin\n→Black List)' }, className: 'node-role-process' },
     { id: 'proc_facturacion', type: 'default', position: { x: 1850, y: 1200 }, data: { label: '🧾 PROCESO\nFACTURACIÓN\n(Contabilidad→Hotel→\nAdmin)' }, className: 'node-role-process' },
@@ -258,21 +282,45 @@ const sistemaCompletoFlow = {
     { id: 'e_i15', source: 'insp_timesheet', target: 'insp_prospectos', style: { stroke: '#f9a825', strokeDasharray: '5,5' } },
 
     // ═══════════════════════════════════════════════════════
-    // RECLUTADORA (flujo interno)
+    // RECLUTADORA (flujo interno - completo)
+    // Captación → Entrevista → Datos → Pool → Requisición →
+    // Búsqueda → Asignación → Trello → Onboarding → Día 1
     // ═══════════════════════════════════════════════════════
-    { id: 'e_r1', source: 'header_requisicion', target: 'req_recepcion', style: { stroke: '#7b1fa2' } },
-    { id: 'e_r2', source: 'header_requisicion', target: 'req_costos', style: { stroke: '#7b1fa2' } },
-    { id: 'e_r3', source: 'header_requisicion', target: 'req_busqueda', style: { stroke: '#7b1fa2' } },
-    { id: 'e_r4', source: 'req_recepcion', target: 'req_prioridad', style: { stroke: '#7b1fa2' } },
-    { id: 'e_r5', source: 'req_prioridad', target: 'req_serial', style: { stroke: '#7b1fa2' } },
-    { id: 'e_r6', source: 'req_costos', target: 'req_margen', style: { stroke: '#7b1fa2' } },
-    { id: 'e_r7', source: 'req_busqueda', target: 'req_filtros', style: { stroke: '#7b1fa2' } },
-    { id: 'e_r8', source: 'req_serial', target: 'req_asignacion', style: { stroke: '#7b1fa2' } },
-    { id: 'e_r9', source: 'req_filtros', target: 'req_decision', style: { stroke: '#7b1fa2' } },
-    { id: 'e_r10', source: 'req_asignacion', target: 'req_tracking', style: { stroke: '#7b1fa2' } },
-    { id: 'e_r11', source: 'req_tracking', target: 'req_show', style: { stroke: '#7b1fa2' } },
-    { id: 'e_r12', source: 'req_tracking', target: 'req_noshow', style: { stroke: '#c62828' } },
-    { id: 'e_r13', source: 'req_margen', target: 'req_pool', style: { stroke: '#7b1fa2', strokeDasharray: '5,5' } },
+
+    // Captación y Entrevista
+    { id: 'e_r1', source: 'header_requisicion', target: 'req_captacion', style: { stroke: '#7b1fa2' } },
+    { id: 'e_r2', source: 'header_requisicion', target: 'req_posiciones', style: { stroke: '#7b1fa2' } },
+    { id: 'e_r3', source: 'header_requisicion', target: 'req_docs', style: { stroke: '#7b1fa2' } },
+    { id: 'e_r4', source: 'req_captacion', target: 'req_entrevista', style: { stroke: '#7b1fa2' } },
+    { id: 'e_r5', source: 'req_posiciones', target: 'req_alertas', style: { stroke: '#c62828', strokeDasharray: '5,5' } },
+    { id: 'e_r6', source: 'req_entrevista', target: 'req_apto', style: { stroke: '#7b1fa2' } },
+    { id: 'e_r6b', source: 'req_alertas', target: 'req_apto', style: { stroke: '#c62828', strokeDasharray: '5,5' } },
+
+    // Datos y Docs
+    { id: 'e_r7', source: 'req_apto', target: 'req_datos', label: 'Sí', style: { stroke: '#7b1fa2' } },
+    { id: 'e_r7b', source: 'req_docs', target: 'req_16pct', label: 'Sin Tax ID', style: { stroke: '#c62828', strokeDasharray: '5,5' } },
+    { id: 'e_r8', source: 'req_datos', target: 'req_pool', style: { stroke: '#7b1fa2' } },
+    { id: 'e_r8b', source: 'req_16pct', target: 'req_pool', style: { stroke: '#7b1fa2', strokeDasharray: '5,5' } },
+
+    // Requisición llega y búsqueda
+    { id: 'e_r9', source: 'req_pool', target: 'req_recepcion', label: 'Cuando hay vacante', style: { stroke: '#7b1fa2', strokeDasharray: '8,4' } },
+    { id: 'e_r10', source: 'req_recepcion', target: 'req_prioridad', style: { stroke: '#7b1fa2' } },
+    { id: 'e_r10b', source: 'req_prioridad', target: 'req_costos', style: { stroke: '#7b1fa2' } },
+    { id: 'e_r11', source: 'req_prioridad', target: 'req_busqueda', style: { stroke: '#7b1fa2' } },
+
+    // Asignación y Trello
+    { id: 'e_r12', source: 'req_busqueda', target: 'req_asignacion', style: { stroke: '#7b1fa2' } },
+    { id: 'e_r13', source: 'req_asignacion', target: 'req_tarjeta', label: 'Acepta', style: { stroke: '#7b1fa2' } },
+    { id: 'e_r13b', source: 'req_asignacion', target: 'req_busqueda', label: 'Rechaza', style: { stroke: '#c62828', strokeDasharray: '5,5' } },
+
+    // Onboarding y Seguimiento
+    { id: 'e_r14', source: 'req_tarjeta', target: 'req_onboarding', style: { stroke: '#7b1fa2' } },
+    { id: 'e_r15', source: 'req_onboarding', target: 'req_monitoreo', style: { stroke: '#7b1fa2' } },
+    { id: 'e_r16', source: 'req_monitoreo', target: 'req_show', label: 'Sí', style: { stroke: '#7b1fa2' } },
+    { id: 'e_r17', source: 'req_monitoreo', target: 'req_noshow', label: 'No', style: { stroke: '#c62828' } },
+    { id: 'e_r18', source: 'req_noshow', target: 'req_busqueda', label: 'Reemplazo', style: { stroke: '#c62828', strokeDasharray: '5,5' } },
+    { id: 'e_r19', source: 'req_show', target: 'req_margen', style: { stroke: '#7b1fa2', strokeDasharray: '5,5' } },
+    { id: 'e_r20', source: 'req_costos', target: 'req_margen', style: { stroke: '#7b1fa2', strokeDasharray: '5,5' } },
 
     // ═══════════════════════════════════════════════════════
     // ADMIN HOTEL (flujo interno)
@@ -318,6 +366,7 @@ const sistemaCompletoFlow = {
     // Requisición
     { id: 'e_x_req1', source: 'hotel_solicitar', target: 'proc_requisicion', label: 'Solicita personal', style: { stroke: '#e65100', strokeWidth: 2, strokeDasharray: '8,4' } },
     { id: 'e_x_req2', source: 'req_recepcion', target: 'proc_requisicion', style: { stroke: '#7b1fa2', strokeWidth: 2, strokeDasharray: '8,4' } },
+    { id: 'e_x_req2b', source: 'req_tarjeta', target: 'proc_requisicion', label: 'Tarjeta Trello', style: { stroke: '#7b1fa2', strokeWidth: 2, strokeDasharray: '8,4' } },
     { id: 'e_x_req3', source: 'insp_onboarding', target: 'proc_requisicion', label: 'Onboard nuevo', style: { stroke: '#f9a825', strokeWidth: 2, strokeDasharray: '8,4' } },
 
     // Nómina
@@ -326,7 +375,8 @@ const sistemaCompletoFlow = {
     { id: 'e_x_nom3', source: 'admin_aprobar_nomina', target: 'proc_nomina', label: 'Aprueba', style: { stroke: '#b71c1c', strokeWidth: 2, strokeDasharray: '8,4' } },
 
     // Onboarding
-    { id: 'e_x_onb1', source: 'req_show', target: 'proc_onboarding', label: 'Empleado llega', style: { stroke: '#7b1fa2', strokeWidth: 2, strokeDasharray: '8,4' } },
+    { id: 'e_x_onb1', source: 'req_onboarding', target: 'proc_onboarding', label: 'Msg bienvenida', style: { stroke: '#7b1fa2', strokeWidth: 2, strokeDasharray: '8,4' } },
+    { id: 'e_x_onb1b', source: 'req_show', target: 'proc_onboarding', label: 'Empleado llegó', style: { stroke: '#7b1fa2', strokeWidth: 2, strokeDasharray: '8,4' } },
     { id: 'e_x_onb2', source: 'insp_dia1', target: 'proc_onboarding', style: { stroke: '#f9a825', strokeWidth: 2, strokeDasharray: '8,4' } },
 
     // Calidad
@@ -405,14 +455,15 @@ const sistemaCompletoFlow = {
     // Admin → Hotel (contrato)
     { id: 'e_direct_7', source: 'admin_firma_contrato', target: 'hotel_contrato', label: 'Service Contract', style: { stroke: '#b71c1c', strokeWidth: 3, strokeDasharray: '8,4' } },
 
-    // Reclutadora → Inspector (empleado asignado)
-    { id: 'e_direct_8', source: 'req_show', target: 'insp_onboarding', label: 'Emp asignado → Onboard', animated: true, style: { stroke: '#9c27b0', strokeWidth: 3 } },
+    // Reclutadora → Inspector (tarjeta Trello + empleado asignado)
+    { id: 'e_direct_8', source: 'req_tarjeta', target: 'insp_onboarding', label: 'Tarjeta Trello → Onboard', animated: true, style: { stroke: '#9c27b0', strokeWidth: 3 } },
+    { id: 'e_direct_8b', source: 'req_show', target: 'insp_onboarding', label: 'Confirmación llegada', style: { stroke: '#9c27b0', strokeWidth: 2, strokeDasharray: '8,4' } },
 
     // Inspector → Hotel (encuesta satisfacción)
     { id: 'e_direct_9', source: 'insp_satisfaccion', target: 'hotel_incidentes', label: 'Encuesta + feedback', style: { stroke: '#f9a825', strokeWidth: 2, strokeDasharray: '8,4' } },
 
-    // Inspector → Reclutadora (prospectos)
-    { id: 'e_direct_10', source: 'insp_prospectos', target: 'req_pool', label: 'Referir prospectos', style: { stroke: '#f9a825', strokeWidth: 2, strokeDasharray: '8,4' } },
+    // Inspector → Reclutadora (prospectos → captación)
+    { id: 'e_direct_10', source: 'insp_prospectos', target: 'req_captacion', label: 'Referir prospectos', style: { stroke: '#f9a825', strokeWidth: 2, strokeDasharray: '8,4' } },
 
     // Colaborador → Inspector (onboarding)
     { id: 'e_direct_11', source: 'colab_pool', target: 'req_asignacion', label: 'Pool → Asignación', style: { stroke: '#2e7d32', strokeWidth: 2, strokeDasharray: '8,4' } },
@@ -426,8 +477,9 @@ const sistemaCompletoFlow = {
     // Colaborador → Contabilidad (discrepancias)
     { id: 'e_direct_14', source: 'colab_solicitudes', target: 'cont_discrepancias', label: 'Solicitudes/Discrepancias', style: { stroke: '#2e7d32', strokeWidth: 2, strokeDasharray: '8,4' } },
 
-    // Reclutadora → Contabilidad (costos)
-    { id: 'e_direct_15', source: 'req_margen', target: 'cont_monday', label: 'Dashboard costos', style: { stroke: '#7b1fa2', strokeWidth: 2, strokeDasharray: '8,4' } },
+    // Reclutadora → Contabilidad (costos + retención 16%)
+    { id: 'e_direct_15', source: 'req_costos', target: 'cont_monday', label: 'Dashboard costos', style: { stroke: '#7b1fa2', strokeWidth: 2, strokeDasharray: '8,4' } },
+    { id: 'e_direct_16', source: 'req_16pct', target: 'cont_discrepancias', label: 'Retención 16% sin Tax ID', style: { stroke: '#7b1fa2', strokeWidth: 2, strokeDasharray: '8,4' } },
   ]
 }
 

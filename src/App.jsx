@@ -72,35 +72,35 @@ const flowsDigital = {
     description: 'Checklist digital, evaluaciones en tablet, GPS supervisión, reportes automáticos',
     data: inspectorDigitalFlow,
     icon: '🏆',
-    status: 'placeholder'
+    status: 'complete'
   },
   'contabilidad': {
     title: '02. Contabilidad',
     description: 'Dashboard automático, validaciones auto, pre-aprobación nómina, facturación digital',
     data: contabilidadDigitalFlow,
     icon: '💰',
-    status: 'placeholder'
+    status: 'complete'
   },
   'requisicion': {
     title: '03. Requisición',
     description: 'Auto-matching por zona, pool inteligente, requisiciones digitales, retención automatizada',
     data: requisicionDigitalFlow,
     icon: '📋',
-    status: 'placeholder'
+    status: 'complete'
   },
   'admin_hotel': {
     title: '04. Admin Hotel',
     description: 'Portal de cliente, solicitar personal online, aprobación horas, dashboard facturación',
     data: adminHotelDigitalFlow,
     icon: '🏨',
-    status: 'placeholder'
+    status: 'complete'
   },
   'admin_orange': {
     title: '05. Admin Orange',
     description: 'Dashboard KPIs, aprobaciones con click, cuentas bancarias seguras, blacklist workflow',
     data: adminOrangeDigitalFlow,
     icon: '👔',
-    status: 'placeholder'
+    status: 'complete'
   },
   'colaborador': {
     title: '06. Colaborador',
@@ -114,7 +114,7 @@ const flowsDigital = {
     description: '6 roles digitalizados con conexiones automatizadas y workflows end-to-end',
     data: sistemaCompletoDigitalFlow,
     icon: '⚡',
-    status: 'placeholder'
+    status: 'complete'
   }
 }
 

@@ -24,7 +24,7 @@ const sistemaCompletoFlow = {
     // HEADERS DE CADA ROL (Nodos grandes de título)
     // ═══════════════════════════════════════════════════════
     { id: 'header_admin', type: 'default', position: { x: 1200, y: 160 }, data: { label: '👔 SILVIA / DIRECCIÓN\nAdmin Orange Staffing\n[Aprueba todo]' }, className: 'node-role-admin' },
-    { id: 'header_hotel', type: 'default', position: { x: 2200, y: 160 }, data: { label: '🏨 MANAGER HOTEL\nCliente del Servicio\n[Solicita y reporta]' }, className: 'node-role-hotel' },
+    { id: 'header_hotel', type: 'default', position: { x: 2200, y: 160 }, data: { label: '🏨 MANAGER HOTEL (Cliente)\nOnboarding → Operación → Facturación\n[Solicita, reporta y evalúa]' }, className: 'node-role-hotel' },
     { id: 'header_inspector', type: 'default', position: { x: 0, y: 160 }, data: { label: '🏆 INSPECTOR DE CALIDAD\nSupervisión en Campo\n[Opera y reporta]' }, className: 'node-role-inspector' },
     { id: 'header_contabilidad', type: 'default', position: { x: 600, y: 160 }, data: { label: '💰 CONTABILIDAD (MÓNICA)\nGestión Financiera\n[Procesa y valida]' }, className: 'node-role-contabilidad' },
     { id: 'header_requisicion', type: 'default', position: { x: 1800, y: 160 }, data: { label: '👥 RECLUTADORA (Cecy/Candy)\nCaptación → Entrevista → Asignación\n[Recluta, filtra y asigna]' }, className: 'node-role-requisicion' },
@@ -124,19 +124,34 @@ const sistemaCompletoFlow = {
 
     // ═══════════════════════════════════════════════════════
     // ROL: ADMIN HOTEL (MANAGER) - Naranja
+    // Flujo: Onboarding cliente → Solicitar personal →
+    //   Recibir empleados → Encuesta → Horas → Incidentes →
+    //   No-Show/Terminación → Facturación
     // ═══════════════════════════════════════════════════════
-    { id: 'hotel_solicitar', type: 'default', position: { x: 2100, y: 340 }, data: { label: '📋 Solicitar\nPersonal' }, className: 'node-role-hotel' },
-    { id: 'hotel_posicion', type: 'default', position: { x: 2100, y: 460 }, data: { label: '👤 Definir Posición\nHorario y Cantidad' }, className: 'node-role-hotel' },
-    { id: 'hotel_contrato', type: 'default', position: { x: 2250, y: 340 }, data: { label: '📄 Service Contract\nFirmado' }, className: 'node-role-hotel' },
-    { id: 'hotel_bill_rate', type: 'default', position: { x: 2250, y: 460 }, data: { label: '💰 Bill Rate\n~$19.58/hr\n(Hotel paga)' }, className: 'node-role-hotel' },
-    { id: 'hotel_recibir_emp', type: 'default', position: { x: 2400, y: 340 }, data: { label: '🤝 Recibir\nEmpleados' }, className: 'node-role-hotel' },
-    { id: 'hotel_emp_trabaja', type: 'default', position: { x: 2400, y: 460 }, data: { label: '👔 Empleado\nTrabajando' }, className: 'node-role-hotel' },
-    { id: 'hotel_horas', type: 'default', position: { x: 2100, y: 580 }, data: { label: '⏰ Reporte Horas\nDom-Sáb\n🔴 Deadline Mié' }, className: 'node-role-hotel' },
-    { id: 'hotel_timesheet', type: 'default', position: { x: 2100, y: 700 }, data: { label: '📊 Subir Time Sheet\nvía App (no fotos)' }, className: 'node-role-hotel' },
-    { id: 'hotel_incidentes', type: 'default', position: { x: 2250, y: 580 }, data: { label: '⚠️ Reportar\nIncidentes' }, className: 'node-role-hotel' },
-    { id: 'hotel_inc_tipos', type: 'default', position: { x: 2250, y: 700 }, data: { label: '📝 Calidad\n❌ Ausencia\n🔴 Comportamiento' }, className: 'node-role-hotel' },
-    { id: 'hotel_facturacion', type: 'default', position: { x: 2400, y: 580 }, data: { label: '🧾 Recibir Invoice\nRevisar vs Horas' }, className: 'node-role-hotel' },
-    { id: 'hotel_pago', type: 'default', position: { x: 2400, y: 700 }, data: { label: '💳 Pago Net 15\nConfirmar Servicio' }, className: 'node-role-hotel' },
+
+    // --- Onboarding como cliente ---
+    { id: 'hotel_onboarding', type: 'default', position: { x: 2100, y: 340 }, data: { label: '🤝 Onboarding Cliente\nCredenciales + Capacitación\n+ Config usuarios' }, className: 'node-role-hotel' },
+    { id: 'hotel_contrato', type: 'default', position: { x: 2250, y: 340 }, data: { label: '📄 Service Contract\nFirmado (rates por\ntipo de trabajador)' }, className: 'node-role-hotel' },
+
+    // --- Operación diaria ---
+    { id: 'hotel_solicitar', type: 'default', position: { x: 2400, y: 340 }, data: { label: '📋 Solicitar Personal\n(App, WhatsApp,\nvía Inspector)' }, className: 'node-role-hotel' },
+    { id: 'hotel_posicion', type: 'default', position: { x: 2400, y: 460 }, data: { label: '👤 Definir Posición\nHorario y Cantidad' }, className: 'node-role-hotel' },
+    { id: 'hotel_recibir_emp', type: 'default', position: { x: 2100, y: 460 }, data: { label: '🤝 Recibir Empleados\n(vestimenta negra,\n"vengo de Orange")' }, className: 'node-role-hotel' },
+    { id: 'hotel_emp_trabaja', type: 'default', position: { x: 2250, y: 460 }, data: { label: '👔 Empleado\nTrabajando' }, className: 'node-role-hotel' },
+
+    // --- Encuesta satisfacción ---
+    { id: 'hotel_encuesta', type: 'default', position: { x: 2100, y: 580 }, data: { label: '⭐ Encuesta Satisfacción\ncuando Inspector visita\n(calidad, puntualidad)' }, className: 'node-role-hotel' },
+
+    // --- Horas y facturación ---
+    { id: 'hotel_horas', type: 'default', position: { x: 2250, y: 580 }, data: { label: '⏰ Reporte Horas\nDom-Sáb\n🔴 Deadline Mié' }, className: 'node-role-hotel' },
+    { id: 'hotel_timesheet', type: 'default', position: { x: 2250, y: 700 }, data: { label: '📊 Subir Time Sheet\nvía App (no fotos)' }, className: 'node-role-hotel' },
+
+    // --- Incidentes y No-Show ---
+    { id: 'hotel_incidentes', type: 'default', position: { x: 2400, y: 580 }, data: { label: '⚠️ Reportar Incidentes\nCalidad, Ausencia,\nComportamiento' }, className: 'node-role-hotel' },
+    { id: 'hotel_noshow', type: 'default', position: { x: 2400, y: 700 }, data: { label: '🚨 No-Show: Hotel llama\nOrange → Reemplazo\n"Enviamos en X min"' }, className: 'node-role-hotel' },
+
+    // --- Facturación ---
+    { id: 'hotel_facturacion', type: 'default', position: { x: 2100, y: 700 }, data: { label: '🧾 Recibir Invoice\nRevisar vs Horas\n💳 Pago Net 15' }, className: 'node-role-hotel' },
 
     // ═══════════════════════════════════════════════════════
     // ROL: COLABORADOR - Verde
@@ -323,20 +338,31 @@ const sistemaCompletoFlow = {
     { id: 'e_r20', source: 'req_costos', target: 'req_margen', style: { stroke: '#7b1fa2', strokeDasharray: '5,5' } },
 
     // ═══════════════════════════════════════════════════════
-    // ADMIN HOTEL (flujo interno)
+    // ADMIN HOTEL (flujo interno - completo)
+    // Onboarding → Solicitar → Recibir → Encuesta →
+    // Horas → Incidentes → No-Show → Facturación
     // ═══════════════════════════════════════════════════════
-    { id: 'e_h1', source: 'header_hotel', target: 'hotel_solicitar', style: { stroke: '#e65100' } },
+
+    // Onboarding y contrato
+    { id: 'e_h1', source: 'header_hotel', target: 'hotel_onboarding', style: { stroke: '#e65100' } },
     { id: 'e_h2', source: 'header_hotel', target: 'hotel_contrato', style: { stroke: '#e65100' } },
-    { id: 'e_h3', source: 'header_hotel', target: 'hotel_recibir_emp', style: { stroke: '#e65100' } },
+    { id: 'e_h3', source: 'header_hotel', target: 'hotel_solicitar', style: { stroke: '#e65100' } },
+    { id: 'e_h3b', source: 'hotel_onboarding', target: 'hotel_recibir_emp', style: { stroke: '#e65100' } },
+    { id: 'e_h3c', source: 'hotel_contrato', target: 'hotel_emp_trabaja', style: { stroke: '#e65100', strokeDasharray: '5,5' } },
+
+    // Solicitar → Posición
     { id: 'e_h4', source: 'hotel_solicitar', target: 'hotel_posicion', style: { stroke: '#e65100' } },
-    { id: 'e_h5', source: 'hotel_contrato', target: 'hotel_bill_rate', style: { stroke: '#e65100' } },
+
+    // Recibir → Trabaja
     { id: 'e_h6', source: 'hotel_recibir_emp', target: 'hotel_emp_trabaja', style: { stroke: '#e65100' } },
-    { id: 'e_h7', source: 'hotel_emp_trabaja', target: 'hotel_horas', style: { stroke: '#e65100' } },
-    { id: 'e_h8', source: 'hotel_horas', target: 'hotel_timesheet', style: { stroke: '#e65100' } },
+
+    // Trabaja → secciones operativas
+    { id: 'e_h7', source: 'hotel_emp_trabaja', target: 'hotel_encuesta', style: { stroke: '#e65100', strokeDasharray: '5,5' } },
+    { id: 'e_h8', source: 'hotel_emp_trabaja', target: 'hotel_horas', style: { stroke: '#e65100' } },
     { id: 'e_h9', source: 'hotel_emp_trabaja', target: 'hotel_incidentes', style: { stroke: '#e65100', strokeDasharray: '5,5' } },
-    { id: 'e_h10', source: 'hotel_incidentes', target: 'hotel_inc_tipos', style: { stroke: '#e65100' } },
-    { id: 'e_h11', source: 'hotel_emp_trabaja', target: 'hotel_facturacion', style: { stroke: '#e65100', strokeDasharray: '5,5' } },
-    { id: 'e_h12', source: 'hotel_facturacion', target: 'hotel_pago', style: { stroke: '#e65100' } },
+    { id: 'e_h10', source: 'hotel_horas', target: 'hotel_timesheet', style: { stroke: '#e65100' } },
+    { id: 'e_h11', source: 'hotel_incidentes', target: 'hotel_noshow', style: { stroke: '#e65100' } },
+    { id: 'e_h12', source: 'hotel_timesheet', target: 'hotel_facturacion', style: { stroke: '#e65100', strokeDasharray: '8,4' } },
 
     // ═══════════════════════════════════════════════════════
     // COLABORADOR (flujo interno)
@@ -460,7 +486,7 @@ const sistemaCompletoFlow = {
     { id: 'e_direct_8b', source: 'req_show', target: 'insp_onboarding', label: 'Confirmación llegada', style: { stroke: '#9c27b0', strokeWidth: 2, strokeDasharray: '8,4' } },
 
     // Inspector → Hotel (encuesta satisfacción)
-    { id: 'e_direct_9', source: 'insp_satisfaccion', target: 'hotel_incidentes', label: 'Encuesta + feedback', style: { stroke: '#f9a825', strokeWidth: 2, strokeDasharray: '8,4' } },
+    { id: 'e_direct_9', source: 'insp_satisfaccion', target: 'hotel_encuesta', label: 'Encuesta + feedback', style: { stroke: '#f9a825', strokeWidth: 2, strokeDasharray: '8,4' } },
 
     // Inspector → Reclutadora (prospectos → captación)
     { id: 'e_direct_10', source: 'insp_prospectos', target: 'req_captacion', label: 'Referir prospectos', style: { stroke: '#f9a825', strokeWidth: 2, strokeDasharray: '8,4' } },
@@ -480,6 +506,12 @@ const sistemaCompletoFlow = {
     // Reclutadora → Contabilidad (costos + retención 16%)
     { id: 'e_direct_15', source: 'req_costos', target: 'cont_monday', label: 'Dashboard costos', style: { stroke: '#7b1fa2', strokeWidth: 2, strokeDasharray: '8,4' } },
     { id: 'e_direct_16', source: 'req_16pct', target: 'cont_discrepancias', label: 'Retención 16% sin Tax ID', style: { stroke: '#7b1fa2', strokeWidth: 2, strokeDasharray: '8,4' } },
+
+    // Hotel → Reclutadora (no-show → buscar reemplazo)
+    { id: 'e_direct_17', source: 'hotel_noshow', target: 'req_busqueda', label: 'Buscar reemplazo urgente', animated: true, style: { stroke: '#e65100', strokeWidth: 3 } },
+
+    // Admin Orange → Hotel (contrato firmado)
+    { id: 'e_direct_18', source: 'admin_firma_contrato', target: 'hotel_onboarding', label: 'Onboarding cliente', style: { stroke: '#b71c1c', strokeWidth: 2, strokeDasharray: '8,4' } },
   ]
 }
 

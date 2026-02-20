@@ -340,6 +340,302 @@ export const getLayoutStats = (nodes, edges) => {
   }
 }
 
+/**
+ * ═══════════════════════════════════════════════════════════════════════
+ * SECTION-AWARE LAYOUT
+ * Detects section headers, groups nodes by section, does mini-Dagre
+ * internally per section, then arranges sections in a grid.
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * Section detection strategy (3 families):
+ *   1. proceso-ux:      s{N}_header  → children have s{N}_ prefix
+ *   2. proceso-digital: section_*    → className 'node-digital-section'
+ *   3. proceso-rol:     section_*    → various classNames
+ *
+ * Cross-section edges: strokeDasharray in style (but NOT reliable alone
+ * since some intra-section edges also use dashes for alt paths).
+ * Primary grouping: ID prefix matching + BFS from section headers
+ * using only non-dashed edges.
+ */
+export const getSectionAwareLayout = (nodes, edges) => {
+  if (nodes.length === 0) return { nodes, edges }
+
+  // ── Step 1: Identify section headers and special nodes ──
+  const nodeMap = new Map(nodes.map(n => [n.id, n]))
+  const startNode = nodes.find(n => n.id === 'start')
+  const endNode = nodes.find(n => n.id === 'end')
+
+  // Detect section headers
+  const sectionHeaders = nodes.filter(n => {
+    if (n.id === 'start' || n.id === 'end') return false
+    // UX pattern: s{N}_header
+    if (/^s\d+_header$/.test(n.id)) return true
+    // Digital/Rol pattern: section_*
+    if (n.id.startsWith('section_')) return true
+    return false
+  })
+
+  // If no section headers found, fall back to Dagre
+  if (sectionHeaders.length === 0) {
+    return getLayoutedElementsDagre(nodes, edges, 'TB')
+  }
+
+  // ── Step 2: Build adjacency lists (only non-cross-section edges) ──
+  // An edge is considered "cross-section" if it has strokeDasharray in style
+  const internalEdges = edges.filter(e => !e.style?.strokeDasharray)
+  const adjForward = new Map()  // source → [targets]
+  const adjReverse = new Map()  // target → [sources]
+
+  internalEdges.forEach(e => {
+    if (!adjForward.has(e.source)) adjForward.set(e.source, [])
+    adjForward.get(e.source).push(e.target)
+    if (!adjReverse.has(e.target)) adjReverse.set(e.target, [])
+    adjReverse.get(e.target).push(e.source)
+  })
+
+  // ── Step 3: Group nodes into sections ──
+  // Strategy: For each section header, collect nodes that:
+  //   a) Share the same ID prefix (s1_, s2_, etc. for UX; or nearest section_ prefix)
+  //   b) Are reachable via BFS through internal edges from the header
+  const assigned = new Set()
+  const sections = []  // [{header, nodes}]
+
+  // Sort headers by their order in the original node array (preserves file order)
+  const headerOrder = nodes.map(n => n.id)
+  sectionHeaders.sort((a, b) => headerOrder.indexOf(a.id) - headerOrder.indexOf(b.id))
+
+  // Determine prefix for each section header
+  const getSectionPrefix = (headerId) => {
+    // UX: s1_header → s1_
+    const uxMatch = headerId.match(/^(s\d+)_header$/)
+    if (uxMatch) return uxMatch[1] + '_'
+    // Digital/Rol: section_onboard → try to find common prefix from children
+    // We'll use BFS-only for these
+    return null
+  }
+
+  sectionHeaders.forEach(header => {
+    const sectionNodes = [header]
+    assigned.add(header.id)
+
+    const prefix = getSectionPrefix(header.id)
+
+    // Method A: prefix matching (most reliable for UX flows)
+    if (prefix) {
+      nodes.forEach(n => {
+        if (!assigned.has(n.id) && n.id !== 'start' && n.id !== 'end' && n.id.startsWith(prefix) && n.id !== header.id) {
+          sectionNodes.push(n)
+          assigned.add(n.id)
+        }
+      })
+    }
+
+    // Method B: BFS from header via internal edges (catches remaining nodes)
+    const queue = [header.id]
+    const visited = new Set([header.id])
+    while (queue.length > 0) {
+      const current = queue.shift()
+      const neighbors = adjForward.get(current) || []
+      for (const neighbor of neighbors) {
+        if (!visited.has(neighbor) && !assigned.has(neighbor) && neighbor !== 'start' && neighbor !== 'end') {
+          // Don't cross into another section header
+          const neighborNode = nodeMap.get(neighbor)
+          if (neighborNode && !sectionHeaders.includes(neighborNode)) {
+            sectionNodes.push(neighborNode)
+            assigned.add(neighbor)
+            visited.add(neighbor)
+            queue.push(neighbor)
+          }
+        }
+      }
+    }
+
+    sections.push({ header, nodes: sectionNodes })
+  })
+
+  // Collect orphan nodes (not assigned to any section, not start/end)
+  const orphans = nodes.filter(n => !assigned.has(n.id) && n.id !== 'start' && n.id !== 'end')
+  if (orphans.length > 0) {
+    // Try to assign orphans to the nearest section by checking edges
+    orphans.forEach(orphan => {
+      // Check which section has edges connecting to this orphan
+      let bestSection = null
+      let bestScore = 0
+      for (const section of sections) {
+        const sectionIds = new Set(section.nodes.map(n => n.id))
+        let score = 0
+        edges.forEach(e => {
+          if (e.source === orphan.id && sectionIds.has(e.target)) score++
+          if (e.target === orphan.id && sectionIds.has(e.source)) score++
+        })
+        if (score > bestScore) {
+          bestScore = score
+          bestSection = section
+        }
+      }
+      if (bestSection) {
+        bestSection.nodes.push(orphan)
+        assigned.add(orphan.id)
+      }
+    })
+    // Any remaining true orphans get their own section
+    const trueOrphans = nodes.filter(n => !assigned.has(n.id) && n.id !== 'start' && n.id !== 'end')
+    if (trueOrphans.length > 0) {
+      sections.push({ header: null, nodes: trueOrphans })
+    }
+  }
+
+  // ── Step 4: Mini-Dagre layout per section ──
+  const sectionBounds = []  // [{x, y, width, height, nodes}]
+
+  sections.forEach(section => {
+    const sNodes = section.nodes
+    if (sNodes.length === 0) return
+
+    // Get edges that are internal to this section
+    const sectionIds = new Set(sNodes.map(n => n.id))
+    const sectionEdges = edges.filter(e => sectionIds.has(e.source) && sectionIds.has(e.target))
+
+    if (sNodes.length === 1) {
+      // Single node section — just place at origin
+      const size = estimateNodeSize(sNodes[0])
+      sNodes[0] = { ...sNodes[0], position: { x: 0, y: 0 } }
+      sectionBounds.push({ width: size.width, height: size.height, nodes: sNodes })
+      return
+    }
+
+    // Use Dagre for internal layout
+    const dagreGraph = new dagre.graphlib.Graph()
+    dagreGraph.setDefaultEdgeLabel(() => ({}))
+    dagreGraph.setGraph({
+      rankdir: 'TB',
+      nodesep: 40,
+      ranksep: 70,
+      marginx: 20,
+      marginy: 20
+    })
+
+    const nodeSizes = {}
+    sNodes.forEach(n => {
+      const size = estimateNodeSize(n)
+      nodeSizes[n.id] = size
+      dagreGraph.setNode(n.id, { width: size.width, height: size.height })
+    })
+
+    sectionEdges.forEach(e => {
+      dagreGraph.setEdge(e.source, e.target)
+    })
+
+    dagre.layout(dagreGraph)
+
+    // Normalize to origin (0,0) and compute bounding box
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+    const positions = {}
+    sNodes.forEach(n => {
+      const pos = dagreGraph.node(n.id)
+      const size = nodeSizes[n.id]
+      const x = pos.x - size.width / 2
+      const y = pos.y - size.height / 2
+      positions[n.id] = { x, y }
+      minX = Math.min(minX, x)
+      minY = Math.min(minY, y)
+      maxX = Math.max(maxX, x + size.width)
+      maxY = Math.max(maxY, y + size.height)
+    })
+
+    // Normalize all positions so section starts at (0,0)
+    const layoutedSectionNodes = sNodes.map(n => ({
+      ...n,
+      position: {
+        x: positions[n.id].x - minX,
+        y: positions[n.id].y - minY,
+      }
+    }))
+
+    sectionBounds.push({
+      width: maxX - minX,
+      height: maxY - minY,
+      nodes: layoutedSectionNodes
+    })
+  })
+
+  // ── Step 5: Arrange sections in a grid ──
+  const COLUMNS = Math.min(4, Math.ceil(Math.sqrt(sectionBounds.length)))
+  const SECTION_GAP_X = 120
+  const SECTION_GAP_Y = 100
+  const START_Y_OFFSET = 120  // Space for the start node above the grid
+
+  // Calculate column widths and row heights
+  const colWidths = new Array(COLUMNS).fill(0)
+  const rows = []
+  for (let i = 0; i < sectionBounds.length; i += COLUMNS) {
+    rows.push(sectionBounds.slice(i, i + COLUMNS))
+  }
+
+  rows.forEach(row => {
+    row.forEach((section, colIdx) => {
+      colWidths[colIdx] = Math.max(colWidths[colIdx], section.width)
+    })
+  })
+
+  const rowHeights = rows.map(row => Math.max(...row.map(s => s.height)))
+
+  // Compute x/y offsets per grid cell
+  const colOffsets = [0]
+  for (let c = 1; c < COLUMNS; c++) {
+    colOffsets[c] = colOffsets[c - 1] + colWidths[c - 1] + SECTION_GAP_X
+  }
+  const rowOffsets = [START_Y_OFFSET]
+  for (let r = 1; r < rowHeights.length; r++) {
+    rowOffsets[r] = rowOffsets[r - 1] + rowHeights[r - 1] + SECTION_GAP_Y
+  }
+
+  // Place all section nodes at their grid positions
+  const allLayoutedNodes = []
+  sectionBounds.forEach((section, sIdx) => {
+    const rowIdx = Math.floor(sIdx / COLUMNS)
+    const colIdx = sIdx % COLUMNS
+    const offsetX = colOffsets[colIdx]
+    const offsetY = rowOffsets[rowIdx]
+
+    section.nodes.forEach(n => {
+      allLayoutedNodes.push({
+        ...n,
+        position: {
+          x: n.position.x + offsetX,
+          y: n.position.y + offsetY,
+        }
+      })
+    })
+  })
+
+  // ── Step 6: Place start and end nodes ──
+  const totalGridWidth = colOffsets[COLUMNS - 1] + colWidths[COLUMNS - 1]
+
+  if (startNode) {
+    allLayoutedNodes.push({
+      ...startNode,
+      position: {
+        x: totalGridWidth / 2 - 80,
+        y: 0,
+      }
+    })
+  }
+
+  if (endNode) {
+    const lastRowBottom = rowOffsets[rowOffsets.length - 1] + rowHeights[rowHeights.length - 1]
+    allLayoutedNodes.push({
+      ...endNode,
+      position: {
+        x: totalGridWidth / 2 - 80,
+        y: lastRowBottom + SECTION_GAP_Y,
+      }
+    })
+  }
+
+  return { nodes: allLayoutedNodes, edges }
+}
+
 // Helper para detectar cruce de líneas
 function linesCross(x1, y1, x2, y2, x3, y3, x4, y4) {
   const denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1)

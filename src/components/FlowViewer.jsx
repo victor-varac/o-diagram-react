@@ -20,6 +20,7 @@ import {
   getCircularLayout,
   getForceLayout,
   getGroupedLayout,
+  getSectionAwareLayout,
   getLayoutStats
 } from '../utils/layoutHelpers'
 
@@ -39,6 +40,7 @@ const FlowViewer = ({ flowData, flowTitle }) => {
   )
 
   // Reset nodes and edges when flow changes
+  // Option D: auto-apply section-aware layout for large flows without saved positions
   useEffect(() => {
     const savedPositions = localStorage.getItem(`flow-positions-${flowTitle}`)
     
@@ -53,6 +55,16 @@ const FlowViewer = ({ flowData, flowTitle }) => {
       } catch (e) {
         setNodes(flowData.nodes)
       }
+    } else if (flowData.nodes.length > 30) {
+      // Large flow with no saved positions → auto-apply section-aware layout
+      const { nodes: layoutedNodes } = getSectionAwareLayout(flowData.nodes, flowData.edges)
+      setNodes(layoutedNodes)
+      // Save the computed positions so they persist
+      const positions = layoutedNodes.reduce((acc, n) => {
+        acc[n.id] = n.position
+        return acc
+      }, {})
+      localStorage.setItem(`flow-positions-${flowTitle}`, JSON.stringify(positions))
     } else {
       setNodes(flowData.nodes)
     }
@@ -87,6 +99,9 @@ const FlowViewer = ({ flowData, flowTitle }) => {
       let layoutedElements
 
       switch (layoutType) {
+        case 'section-aware':
+          layoutedElements = getSectionAwareLayout(nodes, edges)
+          break
         case 'dagre-tb':
           layoutedElements = getLayoutedElementsDagre(nodes, edges, 'TB')
           break
@@ -406,6 +421,18 @@ const FlowViewer = ({ flowData, flowTitle }) => {
             gap: '4px',
             minWidth: '220px'
           }}>
+            <LayoutButton
+              onClick={() => applyLayout('section-aware')}
+              icon="🧩"
+              label="Ordenar por Secciones"
+              description="Agrupa y ordena por sección — Recomendado"
+            />
+
+            <div style={{
+              borderTop: '1px solid #eee',
+              margin: '4px 0'
+            }}></div>
+
             <div style={{
               fontSize: '11px',
               fontWeight: 600,

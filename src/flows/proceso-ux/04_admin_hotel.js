@@ -1,0 +1,47 @@
+// ═══════════════════════════════════════════════════════════════════════
+// USER EXPERIENCE: ADMIN HOTEL (PORTAL DEL CLIENTE)
+// Pantalla por pantalla: todo lo que ve y hace el cliente hotel en el portal
+// ═══════════════════════════════════════════════════════════════════════
+//
+// PLACEHOLDER — Próximamente: flujo completo de UX
+//
+// SECCIONES PLANIFICADAS:
+//   1. Login y Dashboard Principal
+//   2. Solicitar Personal (Formulario)
+//   3. Ver Trabajadores Asignados
+//   4. Aprobar/Reportar Horas
+//   5. Reportar Incidentes
+//   6. Facturación y Pagos
+//   7. Evaluar Colaboradores
+//   8. Renovar Contratos
+//
+// ═══════════════════════════════════════════════════════════════════════
+
+const adminHotelUXFlow = {
+  nodes: [
+    { id: 'start', type: 'input', position: { x: 400, y: 0 }, data: { label: '🏨 Admin Hotel UX\nPortal del Cliente\n(Próximamente)' }, className: 'node-ux-section' },
+
+    { id: 'placeholder_1', type: 'default', position: { x: 100, y: 200 }, data: { label: '🔐 Login\ny Dashboard\n(pendiente)' }, className: 'node-ux-screen' },
+    { id: 'placeholder_2', type: 'default', position: { x: 400, y: 200 }, data: { label: '📝 Solicitar\nPersonal\n(pendiente)' }, className: 'node-ux-screen' },
+    { id: 'placeholder_3', type: 'default', position: { x: 700, y: 200 }, data: { label: '👥 Ver\nTrabajadores\n(pendiente)' }, className: 'node-ux-screen' },
+
+    { id: 'placeholder_4', type: 'default', position: { x: 100, y: 400 }, data: { label: '⏱️ Aprobar\nHoras\n(pendiente)' }, className: 'node-ux-screen' },
+    { id: 'placeholder_5', type: 'default', position: { x: 400, y: 400 }, data: { label: '⚠️ Reportar\nIncidentes\n(pendiente)' }, className: 'node-ux-screen' },
+    { id: 'placeholder_6', type: 'default', position: { x: 700, y: 400 }, data: { label: '🧾 Facturación\ny Pagos\n(pendiente)' }, className: 'node-ux-screen' },
+
+    { id: 'note', type: 'output', position: { x: 400, y: 600 }, data: { label: '🚧 Este flujo UX está en desarrollo.\nSe completará con todas las\npantallas del portal del cliente.' }, className: 'node-ux-feedback' },
+  ],
+  edges: [
+    { id: 'e-start-1', source: 'start', target: 'placeholder_1' },
+    { id: 'e-start-2', source: 'start', target: 'placeholder_2' },
+    { id: 'e-start-3', source: 'start', target: 'placeholder_3' },
+    { id: 'e-1-4', source: 'placeholder_1', target: 'placeholder_4' },
+    { id: 'e-2-5', source: 'placeholder_2', target: 'placeholder_5' },
+    { id: 'e-3-6', source: 'placeholder_3', target: 'placeholder_6' },
+    { id: 'e-4-note', source: 'placeholder_4', target: 'note' },
+    { id: 'e-5-note', source: 'placeholder_5', target: 'note' },
+    { id: 'e-6-note', source: 'placeholder_6', target: 'note' },
+  ]
+}
+
+export default adminHotelUXFlow

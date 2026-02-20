@@ -1,11 +1,13 @@
 import React from 'react'
 
 const FlowSelector = ({ flows, selectedFlow, selectedFolder, onSelectFlow, onSelectFolder }) => {
-  const isDigital = selectedFolder === 'proceso-digital'
-  
   // Color scheme based on folder
-  const accentColor = isDigital ? '#1565C0' : '#FF6D00'
-  const accentBg = isDigital ? '#E3F2FD' : '#FFF3E0'
+  const folderColors = {
+    'proceso-rol': { accent: '#FF6D00', bg: '#FFF3E0' },
+    'proceso-digital': { accent: '#1565C0', bg: '#E3F2FD' },
+    'proceso-ux': { accent: '#00897B', bg: '#E0F2F1' },
+  }
+  const { accent: accentColor, bg: accentBg } = folderColors[selectedFolder] || folderColors['proceso-rol']
 
   return (
     <div style={{
@@ -83,6 +85,39 @@ const FlowSelector = ({ flows, selectedFlow, selectedFolder, onSelectFlow, onSel
         >
           <span>⚡</span>
           <span>Proceso Digital</span>
+        </button>
+
+        <button
+          onClick={() => onSelectFolder('proceso-ux')}
+          style={{
+            flex: 1,
+            padding: '16px 24px',
+            border: 'none',
+            background: selectedFolder === 'proceso-ux' ? 'white' : 'transparent',
+            borderBottom: selectedFolder === 'proceso-ux' ? '3px solid #00897B' : '3px solid transparent',
+            color: selectedFolder === 'proceso-ux' ? '#00897B' : '#666',
+            fontSize: '16px',
+            fontWeight: selectedFolder === 'proceso-ux' ? 700 : 500,
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
+          }}
+          onMouseEnter={(e) => {
+            if (selectedFolder !== 'proceso-ux') {
+              e.target.style.background = '#f5f5f5'
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (selectedFolder !== 'proceso-ux') {
+              e.target.style.background = 'transparent'
+            }
+          }}
+        >
+          <span>📱</span>
+          <span>User Experience</span>
         </button>
       </div>
 

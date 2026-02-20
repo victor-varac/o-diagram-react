@@ -21,6 +21,15 @@ import adminOrangeDigitalFlow from './flows/proceso-digital/05_admin_orange'
 import colaboradorDigitalFlow from './flows/proceso-digital/06_colaborador'
 import sistemaCompletoDigitalFlow from './flows/proceso-digital/07_sistema_completo'
 
+// Import USER EXPERIENCE flows
+import inspectorUXFlow from './flows/proceso-ux/01_inspector'
+import contabilidadUXFlow from './flows/proceso-ux/02_contabilidad'
+import requisicionUXFlow from './flows/proceso-ux/03_requisicion'
+import adminHotelUXFlow from './flows/proceso-ux/04_admin_hotel'
+import adminOrangeUXFlow from './flows/proceso-ux/05_admin_orange'
+import colaboradorUXFlow from './flows/proceso-ux/06_colaborador'
+import sistemaCompletoUXFlow from './flows/proceso-ux/07_sistema_completo'
+
 const flowsRol = {
   'inspector': {
     title: '01. Inspector',
@@ -118,12 +127,65 @@ const flowsDigital = {
   }
 }
 
+const flowsUX = {
+  'inspector': {
+    title: '01. Inspector',
+    description: 'Pantallas del inspector: checklist, evaluaciones, supervisión GPS, incidentes',
+    data: inspectorUXFlow,
+    icon: '🏆',
+    status: 'placeholder'
+  },
+  'contabilidad': {
+    title: '02. Contabilidad',
+    description: 'Pantallas de contabilidad: dashboard validaciones, nómina, facturación',
+    data: contabilidadUXFlow,
+    icon: '💰',
+    status: 'placeholder'
+  },
+  'requisicion': {
+    title: '03. Requisición',
+    description: 'Pantallas de reclutadora: pool, matching, asignación, pipeline',
+    data: requisicionUXFlow,
+    icon: '📋',
+    status: 'placeholder'
+  },
+  'admin_hotel': {
+    title: '04. Admin Hotel',
+    description: 'Portal del cliente: solicitar personal, aprobar horas, facturación',
+    data: adminHotelUXFlow,
+    icon: '🏨',
+    status: 'placeholder'
+  },
+  'admin_orange': {
+    title: '05. Admin Orange',
+    description: 'Dashboard ejecutivo: KPIs, aprobaciones, blacklist, configuración',
+    data: adminOrangeUXFlow,
+    icon: '👔',
+    status: 'placeholder'
+  },
+  'colaborador': {
+    title: '06. Colaborador',
+    description: 'App completa del trabajador: registro, documentos, matching, ponchado, nómina, solicitudes',
+    data: colaboradorUXFlow,
+    icon: '👷',
+    status: 'complete'
+  },
+  'sistema_completo': {
+    title: '07. Sistema Completo UX',
+    description: 'Vista integrada de todas las pantallas de todos los roles y sus conexiones',
+    data: sistemaCompletoUXFlow,
+    icon: '🍊',
+    status: 'placeholder'
+  }
+}
+
 function App() {
   const [selectedFolder, setSelectedFolder] = useState('proceso-rol')
   const [selectedFlow, setSelectedFlow] = useState('inspector')
 
   const getFlowsForFolder = (folder) => {
     if (folder === 'proceso-digital') return flowsDigital
+    if (folder === 'proceso-ux') return flowsUX
     return flowsRol
   }
   const flows = getFlowsForFolder(selectedFolder)

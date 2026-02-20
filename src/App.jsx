@@ -154,7 +154,7 @@ const flowsUX = {
     description: 'Portal del cliente: solicitar personal, aprobar horas, facturación',
     data: adminHotelUXFlow,
     icon: '🏨',
-    status: 'placeholder'
+    status: 'complete'
   },
   'admin_orange': {
     title: '05. Admin Orange',

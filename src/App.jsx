@@ -133,21 +133,21 @@ const flowsUX = {
     description: 'Pantallas del inspector: checklist, evaluaciones, supervisión GPS, incidentes',
     data: inspectorUXFlow,
     icon: '🏆',
-    status: 'placeholder'
+    status: 'complete'
   },
   'contabilidad': {
     title: '02. Contabilidad',
     description: 'Pantallas de contabilidad: dashboard validaciones, nómina, facturación',
     data: contabilidadUXFlow,
     icon: '💰',
-    status: 'placeholder'
+    status: 'complete'
   },
   'requisicion': {
     title: '03. Requisición',
     description: 'Pantallas de reclutadora: pool, matching, asignación, pipeline',
     data: requisicionUXFlow,
     icon: '📋',
-    status: 'placeholder'
+    status: 'complete'
   },
   'admin_hotel': {
     title: '04. Admin Hotel',
@@ -161,7 +161,7 @@ const flowsUX = {
     description: 'Dashboard ejecutivo: KPIs, aprobaciones, blacklist, configuración',
     data: adminOrangeUXFlow,
     icon: '👔',
-    status: 'placeholder'
+    status: 'complete'
   },
   'colaborador': {
     title: '06. Colaborador',
@@ -175,7 +175,7 @@ const flowsUX = {
     description: 'Vista integrada de todas las pantallas de todos los roles y sus conexiones',
     data: sistemaCompletoUXFlow,
     icon: '🍊',
-    status: 'placeholder'
+    status: 'complete'
   }
 }
 

@@ -210,6 +210,11 @@ function App() {
         <FlowViewer 
           flowData={flows[selectedFlow].data}
           flowTitle={flows[selectedFlow].title}
+          flowKey={selectedFlow}
+          flowDescription={flows[selectedFlow].description}
+          flowIcon={flows[selectedFlow].icon}
+          folder={selectedFolder}
+          allFlows={{ rol: flowsRol, digital: flowsDigital, ux: flowsUX }}
         />
       </ReactFlowProvider>
     </div>

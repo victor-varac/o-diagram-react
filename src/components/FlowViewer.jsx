@@ -23,14 +23,25 @@ import {
   getSectionAwareLayout,
   getLayoutStats
 } from '../utils/layoutHelpers'
+import JSONPreviewModal from './JSONPreviewModal'
 
-const FlowViewer = ({ flowData, flowTitle }) => {
+const FlowViewer = ({ 
+  flowData, 
+  flowTitle,
+  flowKey,
+  flowDescription,
+  flowIcon,
+  folder,
+  allFlows
+}) => {
   const [nodes, setNodes, onNodesChange] = useNodesState(flowData.nodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(flowData.edges)
   const [layouting, setLayouting] = useState(false)
   const [exporting, setExporting] = useState(false)
   const [showLayoutMenu, setShowLayoutMenu] = useState(false)
   const [stats, setStats] = useState(null)
+  const [showJSONModal, setShowJSONModal] = useState(false)
+  const [jsonContext, setJsonContext] = useState(null)
   const { fitView, getNodes } = useReactFlow()
   const flowRef = useRef(null)
 
@@ -321,6 +332,209 @@ const FlowViewer = ({ flowData, flowTitle }) => {
     }
   }, [flowTitle, getNodes, fitView])
 
+  // Helper: Get semantic type from className
+  const getSemanticType = (className) => {
+    if (!className) return 'process'
+    if (className.includes('critical')) return 'critical'
+    if (className.includes('urgent')) return 'urgent'
+    if (className.includes('warning')) return 'warning'
+    if (className.includes('success')) return 'success'
+    if (className.includes('info')) return 'info'
+    if (className.includes('accounting')) return 'accounting'
+    if (className.includes('hotel')) return 'hotel'
+    if (className.includes('recruitment')) return 'recruitment'
+    if (className.includes('quality')) return 'quality'
+    if (className.includes('blacklist')) return 'blacklist'
+    if (className.includes('ux-screen')) return 'screen'
+    if (className.includes('ux-form')) return 'form'
+    if (className.includes('ux-action')) return 'action'
+    if (className.includes('ux-feedback')) return 'feedback'
+    if (className.includes('digital-auto')) return 'automated'
+    if (className.includes('digital-hybrid')) return 'hybrid'
+    if (className.includes('digital-rules')) return 'business-rules'
+    if (className.includes('digital-section')) return 'section'
+    return 'process'
+  }
+
+  // Helper: Get layer display name
+  const getLayerName = (folderName) => {
+    switch (folderName) {
+      case 'proceso-rol': return 'Proceso por Rol'
+      case 'proceso-digital': return 'Proceso Digital'
+      case 'proceso-ux': return 'User Experience'
+      default: return folderName
+    }
+  }
+
+  // Helper: Count nodes by type
+  const countByType = (steps) => {
+    return steps.reduce((acc, step) => {
+      acc[step.type] = (acc[step.type] || 0) + 1
+      return acc
+    }, {})
+  }
+
+  // Helper: Find entry points (nodes with no incoming edges)
+  const findEntryPoints = (nodeList, edgeList) => {
+    const targets = new Set(edgeList.map(e => e.target))
+    return nodeList.filter(n => !targets.has(n.id)).map(n => n.id)
+  }
+
+  // Helper: Find exit points (nodes with no outgoing edges)
+  const findExitPoints = (nodeList, edgeList) => {
+    const sources = new Set(edgeList.map(e => e.source))
+    return nodeList.filter(n => !sources.has(n.id)).map(n => n.id)
+  }
+
+  // Helper: Summarize a flow for related context
+  const summarizeFlow = (flowNodes, flowEdges) => {
+    const types = {}
+    flowNodes.forEach(n => {
+      const type = getSemanticType(n.className)
+      types[type] = (types[type] || 0) + 1
+    })
+    
+    const criticalNodes = flowNodes.filter(n => 
+      n.className?.includes('critical') || n.className?.includes('blacklist')
+    ).map(n => n.data?.label).filter(Boolean)
+
+    return {
+      totalSteps: flowNodes.length,
+      totalConnections: flowEdges.length,
+      byType: types,
+      criticalPoints: criticalNodes.slice(0, 5) // Max 5
+    }
+  }
+
+  // Build related context from other layers
+  const buildRelatedContext = useCallback(() => {
+    if (!allFlows || !flowKey) return null
+    
+    const related = {}
+    
+    // Si estamos en UX o Digital, incluir proceso-rol
+    if (folder === 'proceso-ux' || folder === 'proceso-digital') {
+      const rolFlow = allFlows.rol?.[flowKey]
+      if (rolFlow?.data) {
+        related.procesoRol = {
+          layer: 'proceso-rol',
+          layerName: 'Proceso por Rol',
+          role: rolFlow.title,
+          description: rolFlow.description,
+          summary: summarizeFlow(rolFlow.data.nodes, rolFlow.data.edges)
+        }
+      }
+    }
+    
+    // Si estamos en UX, incluir proceso-digital
+    if (folder === 'proceso-ux') {
+      const digitalFlow = allFlows.digital?.[flowKey]
+      if (digitalFlow?.data) {
+        related.procesoDigital = {
+          layer: 'proceso-digital',
+          layerName: 'Proceso Digital',
+          role: digitalFlow.title,
+          description: digitalFlow.description,
+          summary: summarizeFlow(digitalFlow.data.nodes, digitalFlow.data.edges)
+        }
+      }
+    }
+    
+    return Object.keys(related).length > 0 ? related : null
+  }, [folder, flowKey, allFlows])
+
+  // Build complete LLM context
+  const buildLLMContext = useCallback(() => {
+    // Transform nodes to semantic format
+    const steps = nodes.map(node => ({
+      id: node.id,
+      name: node.data?.label || 'Sin nombre',
+      type: getSemanticType(node.className),
+      connectsTo: edges
+        .filter(e => e.source === node.id)
+        .map(e => ({
+          targetId: e.target,
+          targetName: nodes.find(n => n.id === e.target)?.data?.label || null,
+          label: e.label || null
+        }))
+    }))
+
+    // Find critical and success flows
+    const criticalNodes = nodes
+      .filter(n => n.className?.includes('critical') || n.className?.includes('blacklist'))
+      .map(n => ({ id: n.id, name: n.data?.label }))
+    
+    const successNodes = nodes
+      .filter(n => n.className?.includes('success'))
+      .map(n => ({ id: n.id, name: n.data?.label }))
+
+    // Detect suggested components based on node types
+    const suggestedComponents = []
+    const classNames = nodes.map(n => n.className || '').join(' ')
+    if (classNames.includes('ux-form') || classNames.includes('form')) suggestedComponents.push('form')
+    if (classNames.includes('ux-screen')) suggestedComponents.push('screen')
+    if (classNames.includes('checklist') || nodes.some(n => n.data?.label?.toLowerCase().includes('checklist'))) suggestedComponents.push('checklist')
+    if (nodes.some(n => n.data?.label?.toLowerCase().includes('foto') || n.data?.label?.toLowerCase().includes('photo'))) suggestedComponents.push('photo_capture')
+    if (nodes.some(n => n.data?.label?.toLowerCase().includes('gps') || n.data?.label?.toLowerCase().includes('ubicacion'))) suggestedComponents.push('gps_indicator')
+    if (nodes.some(n => n.data?.label?.toLowerCase().includes('tabla') || n.data?.label?.toLowerCase().includes('table'))) suggestedComponents.push('table')
+    if (nodes.some(n => n.data?.label?.toLowerCase().includes('dashboard'))) suggestedComponents.push('dashboard')
+    if (nodes.some(n => n.data?.label?.toLowerCase().includes('notifica'))) suggestedComponents.push('notifications')
+
+    const context = {
+      systemContext: {
+        product: "Orange Staffing",
+        description: "Sistema de gestion de personal temporal para hoteles",
+        domain: "HR Tech / Staffing"
+      },
+      
+      currentView: {
+        layer: folder,
+        layerName: getLayerName(folder),
+        role: {
+          id: flowKey,
+          name: flowTitle,
+          icon: flowIcon,
+          description: flowDescription
+        }
+      },
+      
+      flow: {
+        steps,
+        summary: {
+          totalSteps: nodes.length,
+          totalConnections: edges.length,
+          byType: countByType(steps),
+          entryPoints: findEntryPoints(nodes, edges),
+          exitPoints: findExitPoints(nodes, edges)
+        }
+      },
+      
+      relatedContext: buildRelatedContext(),
+      
+      designHints: {
+        platform: "mixed",
+        suggestedComponents: [...new Set(suggestedComponents)],
+        criticalFlows: criticalNodes,
+        successFlows: successNodes
+      },
+      
+      exportMetadata: {
+        exportDate: new Date().toISOString(),
+        version: "1.0",
+        sourceFile: `Orange_Staffing_${folder}_${flowKey}.json`
+      }
+    }
+    
+    return context
+  }, [nodes, edges, folder, flowKey, flowTitle, flowDescription, flowIcon, buildRelatedContext])
+
+  // Handle export JSON
+  const handleExportJSON = useCallback(() => {
+    const context = buildLLMContext()
+    setJsonContext(context)
+    setShowJSONModal(true)
+  }, [buildLLMContext])
+
   return (
     <div style={{ flex: 1, position: 'relative' }} ref={flowRef}>
       <ReactFlow
@@ -578,6 +792,37 @@ const FlowViewer = ({ flowData, flowTitle }) => {
           <span>{exporting ? 'Exportando...' : 'Exportar PDF'}</span>
         </button>
 
+        {/* Export JSON Button */}
+        <button
+          onClick={handleExportJSON}
+          style={{
+            background: 'linear-gradient(135deg, #00897b 0%, #00695c 100%)',
+            padding: '12px 20px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 12px rgba(0, 137, 123, 0.4)',
+            border: 'none',
+            color: 'white',
+            fontWeight: 600,
+            fontSize: '14px',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)'
+            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 137, 123, 0.5)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)'
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 137, 123, 0.4)'
+          }}
+        >
+          <span style={{ fontSize: '18px' }}>{ }</span>
+          <span>Exportar JSON (LLM)</span>
+        </button>
+
         {/* Reset Button */}
         <button
           onClick={handleResetPositions}
@@ -732,6 +977,18 @@ const FlowViewer = ({ flowData, flowTitle }) => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* JSON Preview Modal */}
+      {showJSONModal && (
+        <JSONPreviewModal
+          isOpen={showJSONModal}
+          jsonData={jsonContext}
+          onClose={() => setShowJSONModal(false)}
+          flowTitle={flowTitle}
+          folder={folder}
+          flowKey={flowKey}
+        />
       )}
     </div>
   )

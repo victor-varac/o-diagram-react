@@ -6,6 +6,7 @@ const FlowSelector = ({ flows, selectedFlow, selectedFolder, onSelectFlow, onSel
     'proceso-rol': { accent: '#FF6D00', bg: '#FFF3E0' },
     'proceso-digital': { accent: '#1565C0', bg: '#E3F2FD' },
     'proceso-ux': { accent: '#00897B', bg: '#E0F2F1' },
+    'proceso-flowchart': { accent: '#7B1FA2', bg: '#F3E5F5' },
   }
   const { accent: accentColor, bg: accentBg } = folderColors[selectedFolder] || folderColors['proceso-rol']
 
@@ -118,6 +119,39 @@ const FlowSelector = ({ flows, selectedFlow, selectedFolder, onSelectFlow, onSel
         >
           <span>📱</span>
           <span>User Experience</span>
+        </button>
+
+        <button
+          onClick={() => onSelectFolder('proceso-flowchart')}
+          style={{
+            flex: 1,
+            padding: '16px 24px',
+            border: 'none',
+            background: selectedFolder === 'proceso-flowchart' ? 'white' : 'transparent',
+            borderBottom: selectedFolder === 'proceso-flowchart' ? '3px solid #7B1FA2' : '3px solid transparent',
+            color: selectedFolder === 'proceso-flowchart' ? '#7B1FA2' : '#666',
+            fontSize: '16px',
+            fontWeight: selectedFolder === 'proceso-flowchart' ? 700 : 500,
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
+          }}
+          onMouseEnter={(e) => {
+            if (selectedFolder !== 'proceso-flowchart') {
+              e.target.style.background = '#f5f5f5'
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (selectedFolder !== 'proceso-flowchart') {
+              e.target.style.background = 'transparent'
+            }
+          }}
+        >
+          <span>📄</span>
+          <span>Flow Chart PDF</span>
         </button>
       </div>
 

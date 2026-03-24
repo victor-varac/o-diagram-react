@@ -30,6 +30,19 @@ import adminOrangeUXFlow from './flows/proceso-ux/05_admin_orange'
 import colaboradorUXFlow from './flows/proceso-ux/06_colaborador'
 import sistemaCompletoUXFlow from './flows/proceso-ux/07_sistema_completo'
 
+// Import FLOWCHART (PDF Original) flows
+import adminFlowchartFlow from './flows/proceso-flowchart/01_admin'
+import bdCoordinatorFlowchartFlow from './flows/proceso-flowchart/02_bd_coordinator'
+import businessDeveloperFlowchartFlow from './flows/proceso-flowchart/03_business_developer'
+import hotelManagerFlowchartFlow from './flows/proceso-flowchart/04_hotel_manager'
+import recruiterFlowchartFlow from './flows/proceso-flowchart/05_recruiter'
+import collaboratingUserFlowchartFlow from './flows/proceso-flowchart/06_collaborating_user'
+import qaInspectorFlowchartFlow from './flows/proceso-flowchart/07_qa_inspector'
+import qaCoordinatorFlowchartFlow from './flows/proceso-flowchart/08_qa_coordinator'
+import accountantFlowchartFlow from './flows/proceso-flowchart/09_accountant'
+import userSupportFlowchartFlow from './flows/proceso-flowchart/10_user_support'
+import flujoPrincipalFlowchartFlow from './flows/proceso-flowchart/11_flujo_principal'
+
 const flowsRol = {
   'inspector': {
     title: '01. Inspector',
@@ -179,6 +192,75 @@ const flowsUX = {
   }
 }
 
+const flowsFlowchart = {
+  'admin': {
+    title: '01. Admin',
+    description: 'Gestión de usuarios, permisos de acceso a módulos, inventario',
+    data: adminFlowchartFlow,
+    icon: '🔧'
+  },
+  'bd_coordinator': {
+    title: '02. BD Coordinator',
+    description: 'Asignación de zonas/rutas, live tracking, revisión de prospectos, conversión a cliente',
+    data: bdCoordinatorFlowchartFlow,
+    icon: '📋'
+  },
+  'business_developer': {
+    title: '03. Business Developer',
+    description: 'Field visits, prospección, propuestas, negociación, cierre de acuerdos con hoteles',
+    data: businessDeveloperFlowchartFlow,
+    icon: '🚗'
+  },
+  'hotel_manager': {
+    title: '04. Hotel Manager',
+    description: 'Requisiciones de personal, staff management, worksheets, QA, inventario, soporte',
+    data: hotelManagerFlowchartFlow,
+    icon: '🏨'
+  },
+  'recruiter': {
+    title: '05. Recruiter',
+    description: 'Sourcing candidatos, verificación blacklist, selección y asignación a hoteles',
+    data: recruiterFlowchartFlow,
+    icon: '👥'
+  },
+  'collaborating_user': {
+    title: '06. Colaborador',
+    description: 'Check-in/out QR + geofencing, tareas, work analytics, soporte',
+    data: collaboratingUserFlowchartFlow,
+    icon: '👷'
+  },
+  'qa_inspector': {
+    title: '07. QA Inspector',
+    description: 'Onboarding en campo, inspecciones QA, formularios, uniformes, reclamos',
+    data: qaInspectorFlowchartFlow,
+    icon: '🔍'
+  },
+  'qa_coordinator': {
+    title: '08. QA Coordinator',
+    description: 'Inicio de servicio, monitoreo, requisiciones, accidentes, incidentes, rechazos, reclamos',
+    data: qaCoordinatorFlowchartFlow,
+    icon: '🏆'
+  },
+  'accountant': {
+    title: '09. Accountant',
+    description: 'Nómina, pagos, facturas, bonos/deducciones, paychecks, reclamos financieros',
+    data: accountantFlowchartFlow,
+    icon: '💰'
+  },
+  'user_support': {
+    title: '10. User Support',
+    description: 'Issues reportados, resolución/escalación, checks rutinarios, estabilidad, bug fixing',
+    data: userSupportFlowchartFlow,
+    icon: '🛟'
+  },
+  'flujo_principal': {
+    title: '11. Flujo Principal',
+    description: 'Flujo completo inter-roles: Prospección → Cliente → Requisición → Onboarding → Operación → Pago',
+    data: flujoPrincipalFlowchartFlow,
+    icon: '🍊'
+  }
+}
+
 function App() {
   const [selectedFolder, setSelectedFolder] = useState('proceso-rol')
   const [selectedFlow, setSelectedFlow] = useState('inspector')
@@ -186,6 +268,7 @@ function App() {
   const getFlowsForFolder = (folder) => {
     if (folder === 'proceso-digital') return flowsDigital
     if (folder === 'proceso-ux') return flowsUX
+    if (folder === 'proceso-flowchart') return flowsFlowchart
     return flowsRol
   }
   const flows = getFlowsForFolder(selectedFolder)
@@ -214,7 +297,7 @@ function App() {
           flowDescription={flows[selectedFlow].description}
           flowIcon={flows[selectedFlow].icon}
           folder={selectedFolder}
-          allFlows={{ rol: flowsRol, digital: flowsDigital, ux: flowsUX }}
+          allFlows={{ rol: flowsRol, digital: flowsDigital, ux: flowsUX, flowchart: flowsFlowchart }}
         />
       </ReactFlowProvider>
     </div>
